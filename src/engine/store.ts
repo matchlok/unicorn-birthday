@@ -17,11 +17,12 @@ type State = {
   setHubSpawn: (spawn: State['hubSpawn']) => void
 }
 
+const initialName = readJson<string | null>('unicornName', null)
+
 export const useStore = create<State>((set, get) => ({
-  // Phase 0 has no NameScreen yet, so always start at the hub.
-  // Phase 1: start at `{ kind: 'name' }` when `unicornName` is null.
-  scene: { kind: 'hub' },
-  unicornName: readJson<string | null>('unicornName', null),
+  // First launch: name the unicorn before anything else.
+  scene: initialName === null ? { kind: 'name' } : { kind: 'hub' },
+  unicornName: initialName,
   muted: readJson('muted', false),
   stickers: readJson<Record<string, number>>('stickers', {}),
   hubSpawn: null,

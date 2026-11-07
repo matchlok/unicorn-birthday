@@ -10,6 +10,14 @@
   --cream: #FFF8F0;     /* card faces, panels */
   --grass: #9BE39B;
   --radius: 28px;
-  --outline: 5px solid var(--grape);
-  --shadow: 0 8px 0 rgba(91, 58, 140, 0.25); /* chunky "toy" drop shadow */
+  --outline: 3px solid rgba(91, 58, 140, 0.85);
+  /* Soft layered lift plus a bright top edge, so surfaces read as glossy plastic instead of flat stickers. */
+  --shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.75),
+    inset 0 -6px 10px rgba(91, 58, 140, 0.14),
+    0 2px 3px rgba(91, 58, 140, 0.18),
+    0 10px 18px -4px rgba(91, 58, 140, 0.28),
+    0 22px 36px -10px rgba(91, 58, 140, 0.25);
+  --sheen: linear-gradient(155deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 45%, rgba(91, 58, 140, 0.08) 100%);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .23 0 0 0 0 .55 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }

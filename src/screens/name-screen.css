@@ -1,0 +1,73 @@
+.name {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 0 24px;
+  overflow: hidden;
+}
+
+.name__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(12px, 2.5vh, 24px);
+  width: min(620px, 100%);
+  padding: clamp(16px, 3vh, 32px) 32px;
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: var(--cream);
+  box-shadow: var(--shadow);
+}
+
+.name__unicorn {
+  width: clamp(110px, 24vh, 220px);
+  aspect-ratio: 1;
+}
+
+.name__prompt {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.5rem, 3.4vh, 2.2rem);
+  font-weight: 700;
+}
+
+.name__input {
+  width: 100%;
+  min-height: 88px;
+  padding: 8px 24px;
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--grape);
+  font: inherit;
+  font-size: 2.4rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  user-select: text;
+}
+
+.name__input:focus {
+  box-shadow: 0 0 0 6px var(--butter);
+}
+
+.name__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
+
+.name__chip {
+  min-width: 88px;
+  min-height: 88px;
+  padding: 8px 24px;
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: var(--lavender);
+  box-shadow: var(--shadow);
+  font-size: 1.5rem;
+  font-weight: 700;
+}

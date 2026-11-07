@@ -1,10 +1,12 @@
 import type { ComponentType } from 'react'
+import { Bee } from './bee'
 import { Dragon } from './dragon'
 import { Fairy } from './fairy'
 import { Ghost } from './ghost'
 import { Gnome } from './gnome'
 import { Mermaid } from './mermaid'
 import { Owl } from './owl'
+import { Penguin } from './penguin'
 import { Unicorn } from './unicorn'
 import { Witch } from './witch'
 
@@ -20,6 +22,8 @@ export const CREATURES: Creature[] = [
   { id: 'ghost', name: 'Ghost', color: '#D9CCFF', Svg: Ghost },
   { id: 'owl', name: 'Owl', color: '#FFD9A8', Svg: Owl },
   { id: 'gnome', name: 'Gnome', color: '#FFC9C9', Svg: Gnome },
+  { id: 'bee', name: 'Bee', color: '#FFF2A8', Svg: Bee },
+  { id: 'penguin', name: 'Penguin', color: '#C9D6FF', Svg: Penguin },
 ]
 
 export const CREATURE_IDS = CREATURES.map((c) => c.id)

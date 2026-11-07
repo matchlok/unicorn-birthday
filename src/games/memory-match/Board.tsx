@@ -2,16 +2,20 @@ import { useEffect, useRef, useState } from 'react'
 import { play } from '../../engine/audio'
 import { Card } from './Card'
 import { CREATURE_IDS } from './creatures'
-import { buildDeck, DIFFICULTY, flip, initialState, isWin, resolve, type Difficulty, type GameState } from './logic'
+import { addPowers, buildDeck, DIFFICULTY, endPeek, flip, initialState, isWin, resolve, applyPower, type Difficulty, type GameState } from './logic'
 
 const MISMATCH_MS = 900
 const WIN_DELAY_MS = 600
+const POWER_DELAY_MS = 650 // beat between a settled pair and its power firing
+const PEEK_MS = 1700
+const SWIRL_MS = 900
 
-type Props = { difficulty: Difficulty; onWin: () => void }
+type Props = { difficulty: Difficulty; onWin: () => void; paused?: boolean }
 
-export function Board({ difficulty, onWin }: Props) {
-  const { cols, rows, pairs, peekMs } = DIFFICULTY[difficulty]
-  const [state, setState] = useState<GameState>(() => initialState(buildDeck(CREATURE_IDS, pairs)))
+export function Board({ difficulty, onWin, paused = false }: Props) {
+  const { cols, rows, pairs, peekMs, powers } = DIFFICULTY[difficulty]
+  const [state, setState] = useState<GameState>(() => initialState(addPowers(buildDeck(CREATURE_IDS, pairs), powers)))
+  const [swirling, setSwirling] = useState(false)
   const [peeking, setPeeking] = useState(peekMs > 0)
   const [focus, setFocus] = useState(0)
   const matchedCount = useRef(0)
@@ -31,6 +35,30 @@ export function Board({ difficulty, onWin }: Props) {
     return () => clearTimeout(t)
   }, [state.locked])
 
+  // Power cards: once a pair is settled, apply what it earned one power at a time.
+  const nextPower = state.pending[0]
+  useEffect(() => {
+    if (!nextPower || state.locked || isWin(state)) return
+    const t = setTimeout(() => {
+      play(nextPower === 'shuffle' ? 'shuffle' : 'peek')
+      if (nextPower === 'shuffle') {
+        setSwirling(true)
+        setTimeout(() => setSwirling(false), SWIRL_MS)
+      }
+      setState((s) => applyPower(s))
+    }, POWER_DELAY_MS)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-run only when the next power or the lock changes
+  }, [nextPower, state.pending.length, state.locked])
+
+  // Peek: the revealed cards flip back down after a moment.
+  const showingPeek = state.revealed.length > 0
+  useEffect(() => {
+    if (!showingPeek) return
+    const t = setTimeout(() => setState(endPeek), PEEK_MS)
+    return () => clearTimeout(t)
+  }, [showingPeek])
+
   // Match sound and the win hand-off.
   useEffect(() => {
     const matched = state.cards.filter((c) => c.matched).length
@@ -42,7 +70,7 @@ export function Board({ difficulty, onWin }: Props) {
   }, [state, onWin])
 
   const flipAt = (index: number) => {
-    if (peeking) return
+    if (peeking || paused || swirling) return
     const next = flip(state, index)
     if (next === state) return
     play('flip')
@@ -70,10 +98,14 @@ export function Board({ difficulty, onWin }: Props) {
         <Card
           key={card.uid}
           creatureId={card.creatureId}
-          faceUp={peeking || card.matched || state.faceUp.includes(i)}
+          faceUp={peeking || card.matched || state.faceUp.includes(i) || state.revealed.includes(i)}
           matched={card.matched}
           wrong={state.locked && state.faceUp.includes(i)}
           focused={focus === i}
+          peeked={state.revealed.includes(i)}
+          swirling={swirling && !card.matched}
+          power={card.power}
+          spent={card.spent}
           onClick={() => {
             setFocus(i)
             flipAt(i)

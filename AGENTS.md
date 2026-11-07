@@ -18,8 +18,9 @@ A web game for a 4-year-old. A unicorn's birthday party hub with landing pads th
 
 Update when a phase finishes or a decision changes.
 
-- **Phase:** 2 (Memory Match) is built as of 2026-11-07: build, lint and 18 tests pass. Not yet checked by eye in a browser: all three difficulties, the hard grid on 1366x768, flip and sparkle animations. Phase 0 transition check is also still open. Sound files are not in `public/sfx/` yet, so the game is silent. The real test is a 4-year-old finishing Easy.
-- **Next action:** Look at it in the browser, then Phase 1 (name the unicorn) in [docs/PLAN.md](docs/PLAN.md#phase-1-name-the-unicorn), which also needs the store initial scene switched to `name` when `unicornName` is null (marked in `src/engine/store.ts` and `SceneRouter.tsx`). Then Phase 3 (3D hub).
+- **Phase:** 2 (Memory Match) is built as of 2026-11-07, now with 5 difficulties: 4 stars (5x4, 10 pairs) and 5 stars (same deck plus shuffle, peek and wand power cards; see PLAN 2a-bis). Phase 1 (name the unicorn) is built the same day: first launch opens `src/screens/NameScreen.tsx`, and the landing page has a name button with a pencil that reopens it. Build, lint and 35 tests pass. Not yet checked by eye in a browser: the name screen, the 4 and 5 star boards on 1366x768, shuffle/peek/wand animations and sounds, the new bee and penguin art, plus everything listed before (flip and sparkle animations, Phase 0 transition). Sound is synthesized with Web Audio in `src/engine/audio.ts` (no files); Howler is unused. The real test is a 4-year-old finishing Easy.
+- **Landing page:** a 2D landing page (unicorn, title, one card per registry game) replaces the placeholder hub as of 2026-11-07, in `src/hub/`. Cards, buttons and panels got a softer look (thin outline, layered shadows, gloss and paper grain via `--shadow`, `--sheen`, `--grain` in `tokens.css`, applied in `global.css`). Build, lint and tests pass; not yet checked by eye.
+- **Next action:** Look at it all in the browser (`npm run dev`), fix what looks off, then Phase 3 (3D hub) in [docs/PLAN.md](docs/PLAN.md#phase-3-party-hub-3d).
 - **Decided:** decisions table in PLAN section 1 (named unicorn, no friends, sound effects only, keyboard and mouse first, served at narjitaujla.com/unicorn).
 
 ## Working method

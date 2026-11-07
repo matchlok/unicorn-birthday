@@ -4,11 +4,16 @@ import { play } from '../../engine/audio'
 import { Stars } from '../../engine/ui/Stars'
 import { DIFFICULTY, type Difficulty } from './logic'
 
-const OPTIONS: { id: Difficulty; stars: 1 | 2 | 3; color: string }[] = [
+const OPTIONS: { id: Difficulty; stars: 1 | 2 | 3 | 4 | 5; color: string }[] = [
   { id: 'easy', stars: 1, color: 'var(--mint)' },
   { id: 'medium', stars: 2, color: 'var(--butter)' },
   { id: 'hard', stars: 3, color: 'var(--pink)' },
+  { id: 'expert', stars: 4, color: 'var(--sky)' },
+  { id: 'wild', stars: 5, color: 'var(--lavender)' },
 ]
+
+// Preview dots that glow gold on the 5-star card, hinting at the special cards.
+const POWER_DOTS = [2, 8, 11, 15, 18]
 
 export function DifficultyPicker({ onPick }: { onPick: (d: Difficulty) => void }) {
   useEffect(() => {
@@ -26,7 +31,7 @@ export function DifficultyPicker({ onPick }: { onPick: (d: Difficulty) => void }
   return (
     <div className="mm-picker">
       {OPTIONS.map(({ id, stars, color }) => {
-        const { cols, rows } = DIFFICULTY[id]
+        const { cols, rows, powers } = DIFFICULTY[id]
         return (
           <motion.button
             key={id}
@@ -42,10 +47,10 @@ export function DifficultyPicker({ onPick }: { onPick: (d: Difficulty) => void }
               onPick(id)
             }}
           >
-            <Stars count={stars} />
+            <Stars count={stars} size={stars > 3 ? 32 : 44} />
             <span className="mm-picker__dots" style={{ ['--cols' as string]: cols }}>
               {Array.from({ length: cols * rows }, (_, i) => (
-                <i key={i} />
+                <i key={i} className={powers.length && POWER_DOTS.includes(i) ? 'mm-picker__power' : undefined} />
               ))}
             </span>
           </motion.button>

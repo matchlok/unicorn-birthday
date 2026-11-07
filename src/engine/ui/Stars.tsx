@@ -1,4 +1,4 @@
-export function Stars({ count, size = 44 }: { count: 1 | 2 | 3; size?: number }) {
+export function Stars({ count, size = 44 }: { count: 1 | 2 | 3 | 4 | 5; size?: number }) {
   return (
     <span style={{ display: 'inline-flex', gap: 4 }} aria-label={`${count} stars`}>
       {Array.from({ length: count }, (_, i) => (

@@ -29,3 +29,23 @@ button {
   color: inherit;
   cursor: pointer;
 }
+
+/* Gloss and paper grain on every raised surface, drawn over the inline background colors. */
+.big-button, .corner-button, .confirm-panel, .mm-picker__card, .mm-card__face, .game-card {
+  position: relative;
+}
+
+.corner-button, .mm-card__face {
+  position: absolute;
+}
+
+.big-button::after, .corner-button::after, .confirm-panel::after, .mm-picker__card::after, .mm-card__face::after, .game-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--sheen), var(--grain);
+  background-blend-mode: normal, multiply;
+  opacity: 0.9;
+  pointer-events: none;
+}

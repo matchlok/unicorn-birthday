@@ -1,6 +1,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { PartyHub } from '../hub/PartyHub'
 import { findGame } from '../games/registry'
+import { NameScreen } from '../screens/NameScreen'
 import { Transition, TRANSITION_MS } from './Transition'
 import { useStore, type Scene } from './store'
 
@@ -24,8 +25,7 @@ function CurrentScene({ scene }: { scene: Scene }) {
       )
     }
     case 'name':
-      // Phase 1 adds NameScreen.
-      return <PartyHub />
+      return <NameScreen />
   }
 }
 

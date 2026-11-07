@@ -9,7 +9,7 @@
 /* Picker */
 .mm-picker {
   display: flex;
-  gap: 32px;
+  gap: 24px;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -19,7 +19,7 @@
   flex-direction: column;
   align-items: center;
   gap: 24px;
-  width: 220px;
+  width: 190px;
   min-height: 260px;
   padding: 28px 16px;
   border: var(--outline);
@@ -39,6 +39,11 @@
   border-radius: 50%;
   background: var(--grape);
   opacity: 0.55;
+}
+
+.mm-picker__dots i.mm-picker__power {
+  background: #e8b800;
+  opacity: 1;
 }
 
 /* Board: 3:4 cards sized to fit the viewport, leaving room for the corner buttons. */
@@ -163,32 +168,154 @@
 
 /* Win */
 .mm-win {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 16px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  animation: mm-win-bg 4s linear infinite;
+  background: linear-gradient(135deg, var(--pink), var(--lavender), var(--sky), var(--mint), var(--butter), var(--pink));
+  background-size: 400% 400%;
+}
+
+@keyframes mm-win-bg {
+  from { background-position: 0% 50%; }
+  to { background-position: 400% 50%; }
+}
+
+.mm-win__rays {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 250vmax;
+  height: 250vmax;
+  margin: -125vmax;
+  background: repeating-conic-gradient(rgba(255, 255, 255, 0.45) 0 10deg, transparent 10deg 20deg);
+  animation: mm-spin 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes mm-spin {
+  to { transform: rotate(360deg); }
+}
+
+.mm-win__floater {
+  position: absolute;
+  left: var(--x);
+  bottom: -4rem;
+  font-size: var(--s);
+  animation: mm-float 5s linear infinite;
+  animation-delay: var(--d);
+  pointer-events: none;
+}
+
+@keyframes mm-float {
+  from { transform: translateY(0) rotate(0); opacity: 1; }
+  to { transform: translateY(-115vh) rotate(360deg); opacity: 0.8; }
 }
 
 .mm-win__title {
+  position: relative;
+  display: flex;
   margin: 0;
-  font-size: clamp(3rem, 9vw, 6rem);
-  font-weight: 700;
+  font-size: clamp(3.5rem, 11vw, 7.5rem);
+  font-weight: 900;
+  -webkit-text-stroke: 8px var(--grape);
+  paint-order: stroke fill;
+  text-shadow: 0 8px 0 var(--grape);
+}
+
+.mm-win__letter {
+  display: inline-block;
 }
 
 .mm-win__unicorn {
+  position: relative;
   width: min(280px, 35vh);
   aspect-ratio: 1;
+  filter: drop-shadow(0 0 24px #fff) drop-shadow(0 0 48px var(--butter));
+}
+
+.mm-win__unicorn-inner {
+  width: 100%;
+  height: 100%;
 }
 
 .mm-win__buttons {
+  position: relative;
   display: flex;
   gap: 32px;
 }
 
-.mm-win__link {
-  border: 0;
-  background: none;
-  font-size: 1rem;
-  text-decoration: underline;
-  opacity: 0.6;
+.mm-win__buttons .big-button {
+  animation: mm-pulse 1.2s ease-in-out infinite;
+}
+
+.mm-win__buttons .big-button:nth-child(2) { animation-delay: 0.2s; }
+.mm-win__buttons .big-button:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes mm-pulse {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.07; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-win, .mm-win__rays, .mm-win__floater, .mm-win__buttons .big-button { animation: none; }
+}
+
+/* Power cards: a twinkle on the back, a badge on the front */
+.mm-card__twinkle {
+  position: absolute;
+  right: 12%;
+  top: 9%;
+  width: 22%;
+  aspect-ratio: 1;
+  background: white;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  animation: mm-twinkle 1.4s ease-in-out infinite;
+}
+
+@keyframes mm-twinkle {
+  0%, 100% { scale: 0.6; opacity: 0.5; }
+  50% { scale: 1.1; opacity: 1; }
+}
+
+.mm-card__power {
+  position: absolute;
+  right: 6%;
+  top: 5%;
+  width: 36%;
+  filter: drop-shadow(0 3px 0 rgba(91, 58, 140, 0.3));
+}
+
+.mm-card__power svg {
+  display: block;
+  width: 100%;
+}
+
+.mm-card__power--spent {
+  opacity: 0.4;
+}
+
+.mm-card--peek .mm-card__front {
+  box-shadow: 0 0 0 6px var(--sky), 0 0 28px 8px var(--sky), var(--shadow);
+}
+
+.mm-card--swirl {
+  animation: mm-swirl 900ms ease-in-out;
+}
+
+@keyframes mm-swirl {
+  0%, 100% { rotate: 0deg; }
+  20% { rotate: -14deg; }
+  50% { rotate: 14deg; }
+  80% { rotate: -8deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-card__twinkle, .mm-card--swirl { animation: none; }
 }

@@ -264,13 +264,13 @@ Each phase ends with a check in the browser and a commit to `main`.
 
 `NameScreen.tsx`, shown on first launch and from a small pencil button next to the name in the hub.
 
-- [ ] A cream panel with a big unicorn illustration (reuse the unicorn card SVG from Phase 2, or a placeholder until it exists).
-- [ ] Prompt: "What's the birthday unicorn's name?" (for the grown-up to read aloud).
-- [ ] A text input (autofocus, max 16 characters, trimmed, letters, numbers, spaces, and `'`/`-` only) plus three suggestion chips: **Sparkle**, **Rainbow**, **Stardust**. Clicking a chip fills the input.
-- [ ] A big "Let's party!" button (disabled while empty). Enter also submits.
-- [ ] Saves to the store (persisted) and goes to the hub.
+- [x] A cream panel with a big unicorn illustration (reuse the unicorn card SVG from Phase 2, or a placeholder until it exists).
+- [x] Prompt: "What's the birthday unicorn's name?" (for the grown-up to read aloud).
+- [x] A text input (autofocus, max 16 characters, trimmed, letters, numbers, spaces, and `'`/`-` only) plus three suggestion chips: **Sparkle**, **Rainbow**, **Stardust**. Clicking a chip fills the input.
+- [x] A big "Let's party!" button (disabled while empty). Enter also submits.
+- [x] Saves to the store (persisted) and goes to the hub.
 
-**Done when:** a fresh browser (clear `localStorage`) shows the name screen, the name survives a reload, and the screen doesn't reappear after a reload.
+**Done when (built, not yet checked in a browser):** a fresh browser (clear `localStorage`) shows the name screen, the name survives a reload, and the screen doesn't reappear after a reload.
 
 ### Phase 2: Memory Match (playable from the placeholder hub)
 
@@ -316,6 +316,12 @@ Tests (`logic.test.ts`):
 - [x] No-match path: locks, then `resolve` unlocks and flips both back.
 - [x] `isWin` is true only when every card is matched.
 - [x] A full simulated game on each difficulty reaches `isWin`.
+
+#### 2a-bis. Extra difficulties (added 2026-11-07)
+
+- 4 stars (`expert`): 5×4 board, 10 pairs, no peek. Needs 10 creatures, so `bee` and `penguin` were added.
+- 5 stars (`wild`): the same 5×4 deck plus five **power cards** (a badge on a normal creature card, a twinkle on its back). A power fires once, after the flipped pair is settled: `shuffle` (hidden cards swap places, animated), `peek` (1-2 hidden cards show for 1.7s), `wand` (one hidden pair matches itself). Logic is `addPowers`, `applyPower`, `endPeek` in `logic.ts`, tested.
+- Picker has five cards (keys 1-5). The 5-star preview shows gold dots for the power cards.
 
 #### 2b. Creatures (`creatures/`)
 
