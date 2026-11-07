@@ -9,7 +9,13 @@ export const GAMES: GameEntry[] = [
     status: 'ready',
     component: lazy(() => import('./memory-match/MemoryMatch')),
   },
-  { id: 'kart-racing', padColor: 'var(--mint)', icon: 'kart', status: 'locked' },
+  {
+    id: 'kart-racing',
+    padColor: 'var(--mint)',
+    icon: 'kart',
+    status: 'ready',
+    component: lazy(() => import('./kart-racing/KartRacing')),
+  },
   { id: 'mystery', padColor: 'var(--butter)', icon: 'present', status: 'coming-soon' },
 ]
 

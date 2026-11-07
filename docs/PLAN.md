@@ -319,8 +319,8 @@ Tests (`logic.test.ts`):
 
 #### 2a-bis. Extra difficulties (added 2026-11-07)
 
-- 4 stars (`expert`): 5×4 board, 10 pairs, no peek. Needs 10 creatures, so `bee` and `penguin` were added.
-- 5 stars (`wild`): the same 5×4 deck plus five **power cards** (a badge on a normal creature card, a twinkle on its back). A power fires once, after the flipped pair is settled: `shuffle` (hidden cards swap places, animated), `peek` (1-2 hidden cards show for 1.7s), `wand` (one hidden pair matches itself). Logic is `addPowers`, `applyPower`, `endPeek` in `logic.ts`, tested.
+- 4 stars (`expert`): 5ï¿½4 board, 10 pairs, no peek. Needs 10 creatures, so `bee` and `penguin` were added.
+- 5 stars (`wild`): the same 5ï¿½4 deck plus five **power cards** (a badge on a normal creature card, a twinkle on its back). A power fires once, after the flipped pair is settled: `shuffle` (hidden cards swap places, animated), `peek` (1-2 hidden cards show for 1.7s), `wand` (one hidden pair matches itself). Logic is `addPowers`, `applyPower`, `endPeek` in `logic.ts`, tested.
 - Picker has five cards (keys 1-5). The 5-star preview shows gold dots for the power cards.
 
 #### 2b. Creatures (`creatures/`)
@@ -422,7 +422,9 @@ Three pads placed at 120Â° apart around the cake, radius about 7 from the center
 - The game holds 60fps on the laptop (check the Performance panel). Draw calls stay under about 150 (log `gl.info.render.calls` once in dev).
 - The bundle loads the hub fast: initial JS under 1 MB gzipped, and Memory Match is lazy-loaded.
 
-### Phase 4: Kart Racing v1 (later; plan in more detail when we get there)
+### Phase 4: Kart Racing v1 (built 2026-11-07, needs an eyes-on pass)
+
+Built without Rapier: arcade kinematics in `logic.ts` fit the "walls only slow you down" rule and are unit-tested. Still open: trampoline ramp, touch controls, and a browser check of camera, model and scenery.
 
 - Install `@react-three/rapier`. The kart game is its own lazy chunk.
 - Backyard course on a flat lawn: a closed loop marked by a white-fence border, flowerpot cones, a sandbox to drive around, a kiddie pool, a garden hose arch, and a gentle trampoline ramp.

@@ -68,3 +68,10 @@ export function celebrateBig(): () => void {
     window.clearTimeout(stop)
   }
 }
+
+// Small burst for a popped balloon, in the balloon's own color.
+export function popBurst(color: string): void {
+  safely(() =>
+    confetti({ particleCount: 40, spread: 70, startVelocity: 28, ticks: 60, origin: { x: 0.5, y: 0.45 }, colors: [color, '#ffffff'] }),
+  )
+}

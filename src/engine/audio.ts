@@ -11,6 +11,9 @@ export type SfxName =
   | 'locked'
   | 'shuffle'
   | 'peek'
+  | 'pop'
+  | 'honk'
+  | 'bump'
 
 type Wave = OscillatorType
 
@@ -103,6 +106,18 @@ const SFX: Record<SfxName, (bus: GainNode, t: number) => void> = {
     [60, 67, 72, 79, 72, 67, 62, 69].forEach((n, i) => note(bus, { freq: midi(n), at: t + i * 0.055, dur: 0.14, wave: 'triangle', gain: 0.5 })),
   // Twinkly high sparkle for a peek or a wand.
   peek: (bus, t) => [88, 91, 95, 100].forEach((n, i) => chime(bus, midi(n), t + i * 0.07, 0.4, 0.6)),
+  // Bright bubbly pop for a balloon.
+  pop: (bus, t) => {
+    note(bus, { freq: 500, slideTo: 1100, at: t, dur: 0.09, wave: 'triangle', gain: 0.7 })
+    chime(bus, midi(88), t + 0.05, 0.35, 0.5)
+  },
+  // Friendly two-note toot.
+  honk: (bus, t) => {
+    note(bus, { freq: midi(65), at: t, dur: 0.16, wave: 'triangle', gain: 0.7 })
+    note(bus, { freq: midi(69), at: t + 0.14, dur: 0.24, wave: 'triangle', gain: 0.7 })
+  },
+  // Soft thud when the kart brushes a fence.
+  bump: (bus, t) => note(bus, { freq: 160, slideTo: 90, at: t, dur: 0.14, wave: 'sine', gain: 0.7 }),
   locked: (bus, t) => note(bus, { freq: 180, slideTo: 140, at: t, dur: 0.18, wave: 'triangle', gain: 0.5 }),
 }
 

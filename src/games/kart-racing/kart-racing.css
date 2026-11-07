@@ -1,0 +1,139 @@
+.kart {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #bdebff;
+  user-select: none;
+}
+
+.kart canvas {
+  display: block;
+}
+
+/* Row of balloon dots: grey rings until popped, then filled with the balloon's color. */
+.kart-balloons {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  gap: 10px;
+  padding: 12px 18px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: rgba(255, 248, 240, 0.9);
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.kart-balloons__dot {
+  width: 28px;
+  height: 34px;
+  border: 3px solid rgba(91, 58, 140, 0.35);
+  border-radius: 50% 50% 48% 48%;
+  background: transparent;
+}
+
+.kart-balloons__dot--got {
+  border-color: rgba(91, 58, 140, 0.85);
+  background: var(--c);
+  box-shadow: inset -4px -4px 0 rgba(255, 255, 255, 0.35);
+}
+
+.kart-hint {
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.kart-hint__row {
+  display: flex;
+  gap: 10px;
+}
+
+.kart-hint__key {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border: var(--outline);
+  border-radius: 20px;
+  background: var(--cream);
+  box-shadow: var(--shadow);
+  color: var(--grape);
+  font-size: 2.4rem;
+}
+
+.kart-win {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 18px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, #fff8f0 0%, var(--sky) 100%);
+}
+
+.kart-win__title {
+  margin: 0;
+  font-size: clamp(3.5rem, 11vw, 7rem);
+  -webkit-text-stroke: 3px var(--grape);
+  paint-order: stroke fill;
+}
+
+.kart-win__prize {
+  font-size: clamp(6rem, 18vw, 10rem);
+  line-height: 1;
+}
+
+.kart-win__prize span {
+  display: inline-block;
+}
+
+.kart-win__balloons {
+  display: flex;
+  gap: 6px;
+  font-size: 2.4rem;
+}
+
+.kart-win__balloon--missed {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+.kart-win__buttons {
+  display: flex;
+  gap: 24px;
+  margin-top: 10px;
+  z-index: 1;
+}
+
+.kart-win__floater {
+  position: absolute;
+  top: 100%;
+  left: var(--x);
+  font-size: var(--s);
+  animation: kart-float 6s linear var(--d) infinite;
+  pointer-events: none;
+}
+
+@keyframes kart-float {
+  to {
+    transform: translateY(-120vh) rotate(25deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kart-win__floater {
+    animation: none;
+  }
+}
