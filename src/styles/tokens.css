@@ -1,0 +1,15 @@
+:root {
+  --pink: #FFB3D9;      /* primary, unicorn, Memory pad */
+  --pink-deep: #FF7EB9; /* pressed / accents */
+  --lavender: #C8B6FF;
+  --mint: #B8F2E6;      /* Kart pad */
+  --butter: #FFE66D;    /* Mystery pad, stars */
+  --sky: #A0E7FF;
+  --peach: #FFC9A8;
+  --grape: #5B3A8C;     /* outlines, text */
+  --cream: #FFF8F0;     /* card faces, panels */
+  --grass: #9BE39B;
+  --radius: 28px;
+  --outline: 5px solid var(--grape);
+  --shadow: 0 8px 0 rgba(91, 58, 140, 0.25); /* chunky "toy" drop shadow */
+}
