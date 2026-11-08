@@ -16,6 +16,10 @@
   background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(255, 255, 255, 0.7), transparent 70%);
 }
 
+.hub > * {
+  flex-shrink: 0; /* overflow and scroll instead of squashing the content to fit */
+}
+
 .hub__bunting {
   position: absolute;
   top: 0;
