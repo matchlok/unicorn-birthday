@@ -195,8 +195,8 @@
   }
 
   .mm-picker__card svg {
-    width: 30px;
-    height: 30px;
+    width: 22px; /* five stars + gaps must fit the 150px card */
+    height: 22px;
   }
 
   .mm-picker__card:last-child {
@@ -232,8 +232,8 @@
   }
 
   .mm-picker__card svg {
-    width: 26px;
-    height: 26px;
+    width: 19px; /* five stars + gaps must fit the 128px card */
+    height: 19px;
   }
 
   .mm-picker__dots {
