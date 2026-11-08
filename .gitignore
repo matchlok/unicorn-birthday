@@ -4,3 +4,6 @@ dist/
 !.env.example
 .vercel/
 *.log
+
+# Blog drafts (not for the repo)
+blog/

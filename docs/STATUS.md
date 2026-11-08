@@ -1,0 +1,12 @@
+# Status history
+
+Moved out of `AGENTS.md` so the agent guide stays short. `AGENTS.md` keeps only the current phase and next action.
+
+- **Phase:** 2 (Memory Match) is built as of 2026-11-07, now with 5 difficulties: 4 stars (5x4, 10 pairs) and 5 stars (same deck plus shuffle, peek and wand power cards; see PLAN 2a-bis). Phase 1 (name the unicorn) is built the same day: first launch opens `src/screens/NameScreen.tsx`, and the landing page has a name button with a pencil that reopens it. Build, lint and 35 tests pass. Not yet checked by eye in a browser: the name screen, the 4 and 5 star boards on 1366x768, shuffle/peek/wand animations and sounds, the new bee and penguin art, plus everything listed before (flip and sparkle animations, Phase 0 transition). Sound is synthesized with Web Audio in `src/engine/audio.ts` (no files); Howler is unused. The real test is a 4-year-old finishing Easy.
+- **Landing page:** a 2D landing page (unicorn, title, one card per registry game) replaces the placeholder hub as of 2026-11-07, in `src/hub/`. Cards, buttons and panels got a softer look (thin outline, layered shadows, gloss and paper grain via `--shadow`, `--sheen`, `--grain` in `tokens.css`, applied in `global.css`). Build, lint and tests pass; not yet checked by eye.
+- **Kart Racing (Phase 4 v1):** built 2026-11-07 in `src/games/kart-racing/`, registry entry now `ready`. One lap of a backyard loop with a white fence, finish rainbow arch, hose arch, pool, sandbox, trees and flowers; 8 balloons to pop (shown as dots, never a score); arrows or WASD, space honks; walls only slow the kart; win screen gives a sticker. Pure logic in `logic.ts` (17 tests, including a scripted driver that finishes the lap). **Not yet checked by eye in a browser:** camera feel, kart model, scenery, balloon pops, sounds. Rapier was NOT installed: movement is hand-rolled kinematics. Not built from the Phase 4 list: trampoline ramp, flowerpot cones as obstacles, touch controls.
+- **Decided:** decisions table in PLAN section 1 (named unicorn, no friends, sound effects only, keyboard and mouse first, served at narjitaujla.com/unicorn).
+
+## iPhone and iPad (Phase 6)
+
+6a (groundwork, iOS audio unlock) and 6b (Memory Match portrait grid, picker, win buttons) built 2026-11-08; `layout.ts` has 7 tests, 59 total pass. Checked in Playwright phone emulation only. Reported 2026-11-07 on a real phone: scrolling doesn't work and music doesn't play. Still to do: 6c kart touch controls, 6d hub and name screen, 6e iPad.

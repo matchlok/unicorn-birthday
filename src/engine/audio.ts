@@ -216,6 +216,22 @@ function playSilence(c: AudioContext): void {
   src.start(0)
 }
 
+// iOS mutes Web Audio when the ring/silent switch is on, but not a playing <audio> element.
+// Looping a silent clip moves the page onto the media channel (works on iOS older than 17 too).
+let keepAlive: HTMLAudioElement | null = null
+function playMediaChannelClip(): void {
+  if (keepAlive) {
+    if (keepAlive.paused) void keepAlive.play().catch(() => {})
+    return
+  }
+  const wav =
+    'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA='
+  keepAlive = new Audio(wav)
+  keepAlive.loop = true
+  keepAlive.volume = 0.01
+  void keepAlive.play().catch(() => {})
+}
+
 // True once the context is actually producing sound; callers keep listening until then.
 export function isAudioRunning(): boolean {
   return ctx?.state === 'running'
