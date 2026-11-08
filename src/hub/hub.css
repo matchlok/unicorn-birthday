@@ -146,33 +146,6 @@
   50% { scale: 1.07; }
 }
 
-.hub-shelf {
-  position: absolute;
-  z-index: 10;
-  left: calc(var(--edge) + var(--safe-left));
-  bottom: calc(var(--edge) + var(--safe-bottom));
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  max-width: calc(100% - var(--edge) * 2 - var(--safe-left) - var(--safe-right));
-  padding: 6px 12px;
-  border: var(--outline);
-  border-radius: 999px;
-  background: var(--cream);
-  box-shadow: var(--shadow);
-  pointer-events: none;
-}
-
-.hub-shelf svg {
-  flex: none;
-  width: 28px;
-  height: 28px;
-}
-
-.hub-shelf b {
-  font-size: 1.4rem;
-}
-
 .hub-hint {
   position: absolute;
   z-index: 10;

@@ -414,7 +414,7 @@ Three pads placed at 120° apart around the cake, radius about 7 from the center
 
 #### 3e. Hub UI
 - [x] Top-right: `MuteButton`. Top-left: the unicorn's name with a small pencil icon (opens `NameScreen`).
-- [x] Sticker shelf (bottom-left): one small star per Memory Match win, up to 10, then "10+". Stickers survive reload.
+- [x] ~~Sticker shelf (bottom-left)~~ removed 2026-11-08: games are evergreen, so no win counter on the hub. Stickers are still saved in the store.
 - [x] A one-time hint for the grown-up on first visit: a small bubble near the bottom, "Use the arrow keys or click to walk to a pad!", that disappears after the first move.
 
 **Done when:**

@@ -13,21 +13,6 @@ import './hub.css'
 const HubScene = lazy(() => import('./HubScene'))
 
 const isTouch = () => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches
-const MAX_STARS = 10
-
-function StickerShelf({ total }: { total: number }) {
-  if (total <= 0) return null
-  return (
-    <div className="hub-shelf" aria-hidden>
-      {Array.from({ length: Math.min(total, MAX_STARS) }, (_, i) => (
-        <svg key={i} viewBox="0 0 24 24">
-          <path d="M12 2l3 7 7.5.7-5.7 5 1.8 7.3L12 18l-6.6 4 1.8-7.3-5.7-5L9 9z" fill="var(--butter)" stroke="var(--grape)" strokeWidth="1.8" strokeLinejoin="round" />
-        </svg>
-      ))}
-      {total > MAX_STARS && <b>+</b>}
-    </div>
-  )
-}
 
 // The party hub: a floating cake island. Each game has a display on it; walk onto one to play.
 export function PartyHub() {
@@ -35,13 +20,11 @@ export function PartyHub() {
   const name = useStore((s) => s.unicornName)
   const spawn = useStore((s) => s.hubSpawn)
   const setHubSpawn = useStore((s) => s.setHubSpawn)
-  const stickers = useStore((s) => s.stickers)
   const bannerRef = useRef<HTMLDivElement>(null)
   const [activePad, setActivePad] = useState<number | null>(null)
   const [hint, setHint] = useState(() => !readJson('hubHintSeen', false))
 
   const game = activePad === null ? null : GAMES[activePad]
-  const total = Object.values(stickers).reduce((a, b) => a + b, 0)
 
   // Entering a pad: a happy chime for a playable game, a soft "not yet" otherwise.
   useEffect(() => {
@@ -99,7 +82,6 @@ export function PartyHub() {
         </motion.button>
       )}
 
-      <StickerShelf total={total} />
       <PadPrompt game={game} onPlay={playGame} />
 
       {hint && !game && (
