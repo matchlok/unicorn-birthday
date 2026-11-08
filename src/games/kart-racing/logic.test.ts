@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   BACKYARD_CONTROL,
+  combineInput,
+  pedalsToInput,
   KART,
   buildTrack,
   makeBalloons,
@@ -194,5 +196,18 @@ describe('scatter', () => {
       expect(nearestOnTrack(track, p.x, p.z).dist).toBeGreaterThanOrEqual(track.halfWidth + 3)
       expect(Math.hypot(p.x, p.z)).toBeGreaterThanOrEqual(8)
     }
+  })
+})
+
+describe('combineInput', () => {
+  it('keeps either source when the other is idle', () => {
+    expect(combineInput({ throttle: 1, steer: 0 }, { throttle: 0, steer: -1 })).toEqual({ throttle: 1, steer: -1 })
+  })
+  it('lets the stronger push win on an axis', () => {
+    expect(combineInput({ throttle: 0, steer: 1 }, { throttle: 0, steer: -1 }).steer).toBe(1)
+  })
+  it('turns pedals into input, with go and back cancelling', () => {
+    expect(pedalsToInput({ left: false, right: true, go: true, back: false })).toEqual({ throttle: 1, steer: 1 })
+    expect(pedalsToInput({ left: true, right: true, go: true, back: true })).toEqual({ throttle: 0, steer: 0 })
   })
 })

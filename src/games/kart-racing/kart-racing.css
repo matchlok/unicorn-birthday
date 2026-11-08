@@ -137,3 +137,93 @@
     animation: none;
   }
 }
+
+/* Touch pedals: bottom corners, inside the safe area. */
+.kart-pedals {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.kart-pedals__side {
+  position: absolute;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.kart-pedals__side--left {
+  left: calc(16px + env(safe-area-inset-left, 0px));
+}
+
+.kart-pedals__side--right {
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.kart-pedal {
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  border: var(--outline);
+  border-radius: 28px;
+  background: var(--cream);
+  box-shadow: var(--shadow);
+  color: var(--grape);
+  font-size: 2.6rem;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  transition: transform 0.08s;
+}
+
+.kart-pedal:active {
+  transform: scale(0.9);
+}
+
+.kart-pedal--go {
+  width: 128px;
+  height: 128px;
+  background: #8fe3a0;
+  font-size: 3.2rem;
+}
+
+.kart-pedal--back {
+  width: 80px;
+  height: 80px;
+  font-size: 2rem;
+}
+
+@media (max-height: 420px) {
+  .kart-pedal { width: 88px; height: 88px; }
+  .kart-pedal--go { width: 104px; height: 104px; }
+  .kart-pedal--back { width: 72px; height: 72px; }
+}
+
+.kart-hint--touch {
+  bottom: auto;
+  top: 50%;
+  left: auto;
+  right: calc(60px + env(safe-area-inset-right, 0px));
+  transform: none;
+}
+
+/* Narrow phones: smaller balloon dots so the bar fits between the home and sound buttons. */
+@media (max-width: 480px) {
+  .kart-balloons {
+    top: 28px;
+    gap: 5px;
+    padding: 8px 12px;
+  }
+
+  .kart-balloons__dot {
+    width: 18px;
+    height: 24px;
+    border-width: 2px;
+  }
+}

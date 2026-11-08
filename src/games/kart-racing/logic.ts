@@ -13,6 +13,18 @@ export type Track = {
 export type KartState = { x: number; z: number; heading: number; speed: number }
 export type DriveInput = { throttle: number; steer: number } // each -1..1; steer +1 = right
 
+// Keyboard and touch both produce a DriveInput; on each axis the stronger push wins.
+export function combineInput(a: DriveInput, b: DriveInput): DriveInput {
+  const pick = (x: number, y: number) => Math.max(-1, Math.min(1, Math.abs(y) > Math.abs(x) ? y : x))
+  return { throttle: pick(a.throttle, b.throttle), steer: pick(a.steer, b.steer) }
+}
+
+export type PedalState = { left: boolean; right: boolean; go: boolean; back: boolean }
+
+export function pedalsToInput(p: PedalState): DriveInput {
+  return { throttle: (p.go ? 1 : 0) - (p.back ? 1 : 0), steer: (p.right ? 1 : 0) - (p.left ? 1 : 0) }
+}
+
 export const KART = {
   maxSpeed: 11,
   maxReverse: 4,

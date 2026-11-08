@@ -497,12 +497,12 @@ Added 2026-11-08. iPhone first (390x844 portrait is the target, 375x667 iPhone S
 - [x] Rule check: 4-star and 5-star cards come out around 80px, under the 88px rule. Accept this for 4 and 5 stars only (those are for older kids or grown-ups); 1 to 3 stars must stay 88px or bigger.
 
 #### 6c. Kart Racing touch controls
-- [ ] **On-screen pedals, shown only on touch devices** (`(pointer: coarse)` or the first `touchstart`). Left thumb: two big steer buttons, ◀ and ▶. Right thumb: one big green "go" pedal, with a small "back" pedal above it. Each is 96px or more, sits in the bottom corners inside the safe area, and gives a squish plus a click sound on press. Reuse the existing key-cap look so the art matches the keyboard hint.
-- [ ] Multi-touch: steer and go at the same time. Use pointer events with `setPointerCapture`, track pressed buttons per pointer id, and release on `pointerup`, `pointercancel` and `blur` so a finger sliding off never leaves the kart stuck.
-- [ ] Merge sources in one input hook: rename `useKeys` to `useDriveInput`, which returns the same `DriveInput` from keys OR touch. `logic.ts` doesn't change. Keep the merge pure (`combineInput(keys, touch)`) and test it.
+- [x] **On-screen pedals, shown only on touch devices** (`(pointer: coarse)` or the first `touchstart`). Left thumb: two big steer buttons, ◀ and ▶. Right thumb: one big green "go" pedal, with a small "back" pedal above it. Each is 96px or more, sits in the bottom corners inside the safe area, and gives a squish plus a click sound on press. Reuse the existing key-cap look so the art matches the keyboard hint.
+- [x] Multi-touch: steer and go at the same time. Use pointer events with `setPointerCapture`, track pressed buttons per pointer id, and release on `pointerup`, `pointercancel` and `blur` so a finger sliding off never leaves the kart stuck.
+- [x] Merge sources in one input hook: rename `useKeys` to `useDriveInput`, which returns the same `DriveInput` from keys OR touch. `logic.ts` doesn't change. Keep the merge pure (`combineInput(keys, touch)`) and test it.
 - [ ] Honk: tap the kart, or a small horn button near the top.
-- [ ] `DriveHint` on touch: point at the go pedal (pulsing hand) instead of showing keyboard keys.
-- [ ] Orientation: the race is best in landscape. In portrait, still playable (raise the camera FOV a little so the road isn't a sliver), plus a friendly "turn me sideways" phone picture that fades on its own. Never blocks play.
+- [x] `DriveHint` on touch: point at the go pedal (pulsing hand) instead of showing keyboard keys.
+- [x] Orientation: the race is best in landscape. In portrait, still playable (raise the camera FOV a little so the road isn't a sliver), plus a friendly "turn me sideways" phone picture that fades on its own. Never blocks play.
 - [ ] Option to try with the kid if steering is too hard: "auto-go", where the kart rolls forward on its own and the child only steers. Build it behind a constant, decide after a kid test.
 
 #### 6d. Hub, name screen, the rest

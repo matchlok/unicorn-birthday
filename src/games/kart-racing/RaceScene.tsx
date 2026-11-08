@@ -250,7 +250,7 @@ function Race({ paused, getInput, onCollect, onFinish }: RaceProps) {
 
 export function RaceScene(props: RaceProps) {
   return (
-    <Canvas dpr={[1, 2]} camera={{ fov: 62, near: 0.1, far: 400 }}>
+    <Canvas dpr={[1, 2]} camera={{ fov: typeof window !== 'undefined' && window.innerHeight > window.innerWidth ? 80 : 62, near: 0.1, far: 400 }}>
       <color attach="background" args={[SKY]} />
       <fog attach="fog" args={[SKY, 70, 190]} />
       <hemisphereLight args={['#FFFFFF', '#A8E6A0', 1.4]} />

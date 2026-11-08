@@ -7,19 +7,38 @@ import type { GameProps } from '../types'
 import { BALLOON_COUNT, BALLOONS } from './course'
 import { KartWin } from './KartWin'
 import { RaceScene } from './RaceScene'
+import { TouchPedals } from './TouchPedals'
 import { useKeys } from './useKeys'
+import { combineInput, pedalsToInput, type DriveInput, type PedalState } from './logic'
 import './kart-racing.css'
 
 type Phase = 'play' | 'win'
 
 const FINISH_PAUSE_MS = 1600 // let her roll through the arch before the party starts
 
+function useIsTouch() {
+  const [touch, setTouch] = useState(() => typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches)
+  useEffect(() => {
+    const on = () => setTouch(true)
+    window.addEventListener('touchstart', on, { once: true, passive: true })
+    return () => window.removeEventListener('touchstart', on)
+  }, [])
+  return touch
+}
+
 function KeyCap({ children, big }: { children: string; big?: boolean }) {
   return <span className={`kart-hint__key${big ? ' kart-hint__key--big' : ''}`}>{children}</span>
 }
 
 // Pictures only: which keys to press, until she presses one.
-function DriveHint() {
+function DriveHint({ touch }: { touch: boolean }) {
+  if (touch) {
+    return (
+      <motion.div className="kart-hint kart-hint--touch" aria-hidden animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1 }}>
+        <span style={{ fontSize: '4rem' }}>👈</span>
+      </motion.div>
+    )
+  }
   return (
     <motion.div
       className="kart-hint"
@@ -49,10 +68,13 @@ export default function KartRacing({ onExit }: GameProps) {
   const [driving, setDriving] = useState(false)
   const winTimer = useRef<number | undefined>(undefined)
 
-  const getInput = useKeys({
+  const isTouch = useIsTouch()
+  const pedals = useRef<PedalState>({ left: false, right: false, go: false, back: false })
+  const getKeys = useKeys({
     onDriveKey: () => setDriving(true),
     onHonk: () => play('honk'),
   })
+  const getInput = useRef<() => DriveInput>(() => combineInput(getKeys.current(), pedalsToInput(pedals.current)))
 
   useEffect(() => () => window.clearTimeout(winTimer.current), [])
 
@@ -85,7 +107,8 @@ export default function KartRacing({ onExit }: GameProps) {
               />
             ))}
           </div>
-          {!driving && <DriveHint />}
+          {isTouch && <TouchPedals state={pedals} onPress={() => setDriving(true)} />}
+          {!driving && <DriveHint touch={isTouch} />}
         </>
       )}
 
