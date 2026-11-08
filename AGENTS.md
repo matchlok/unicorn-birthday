@@ -18,8 +18,8 @@ A web game for a 4-year-old. A unicorn's birthday party hub with landing pads th
 
 Update when a phase finishes or a decision changes.
 
-- **Phase:** Phases 0, 1, 2 (Memory Match, 5 difficulties), the landing page, Kart Racing v1 and Phase 6a/6b/6c (iPhone groundwork, portrait Memory Match, kart touch pedals) are built. Mobile still has bugs (scroll, music). Little has been checked by eye. The real test is a 4-year-old finishing Easy.
-- **Next action:** Fix mobile music, then Phase 6d, then the browser eyes-on pass and Phase 3 (3D hub) in [docs/PLAN.md](docs/PLAN.md#phase-3-party-hub-3d).
+- **Phase:** Phases 0, 1, 2 (Memory Match, 5 difficulties), Kart Racing v1, Phase 6a/6b/6c (iPhone groundwork, portrait Memory Match, kart touch pedals) and Phase 3 (3D party hub with a display per game) are built. Little has been checked on a real device. The real test is a 4-year-old finishing Easy.
+- **Next action:** Phase 6d/6e (hub touch polish, iPad), a real-device pass of the 3D hub, then the third game for pad 3 (see [docs/PLAN.md](docs/PLAN.md)).
 
 Details per phase, what is unchecked, and decisions: [docs/STATUS.md](docs/STATUS.md). Add new entries there; keep only the phase and next action here.
 

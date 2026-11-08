@@ -1,192 +1,33 @@
 .hub {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: safe center; /* centred when it fits, top-aligned (scrollable) when not */
-  gap: clamp(8px, 2.5vh, 48px);
   position: absolute;
   inset: 0;
-  padding: calc(clamp(32px, 6vh, 56px) + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  box-sizing: border-box;
-  /* Soft sunbeam glow behind the unicorn. */
-  background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(255, 255, 255, 0.7), transparent 70%);
+  overflow: hidden;
+  touch-action: none; /* taps walk the unicorn; the page never scrolls */
 }
 
-.hub > * {
-  flex-shrink: 0; /* overflow and scroll instead of squashing the content to fit */
-}
-
-.hub__bunting {
+.hub__canvas {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-around;
-  pointer-events: none;
+  inset: 0;
 }
 
-.hub__bunting i {
-  width: clamp(28px, 5vw, 56px);
-  height: clamp(36px, 7vw, 72px);
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  transform-origin: top center;
-  animation: hub-sway 3s ease-in-out infinite alternate;
-}
-
-.hub__bunting i:nth-child(even) {
-  animation-delay: -1.5s;
-}
-
-@keyframes hub-sway {
-  from { rotate: -4deg; }
-  to { rotate: 4deg; }
-}
-
-.hub__balloon {
+.hub__loading {
   position: absolute;
-  bottom: -60px;
-  width: 64px;
-  height: 80px;
-  border-radius: 50% 50% 48% 48%;
-  /* Inner shade and a glossy highlight give the balloon volume. */
-  box-shadow:
-    inset -8px -10px 14px rgba(91, 58, 140, 0.25),
-    inset 8px 8px 12px rgba(255, 255, 255, 0.55),
-    0 10px 18px -6px rgba(91, 58, 140, 0.3);
-  animation: hub-rise 9s ease-in-out infinite;
-  pointer-events: none;
-}
-
-.hub__balloon::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  width: 2px;
-  height: 70px;
-  background: rgba(91, 58, 140, 0.45);
-}
-
-@keyframes hub-rise {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-38vh) translateX(14px); }
-}
-
-.hub__header {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.hub__unicorn {
-  width: clamp(84px, 17vh, 220px);
-  aspect-ratio: 1;
-  filter: drop-shadow(0 14px 14px rgba(91, 58, 140, 0.3)) drop-shadow(0 0 28px rgba(255, 255, 255, 0.8));
-}
-
-.hub__unicorn svg {
-  width: 100%;
-  height: 100%;
-}
-
-.hub__title {
-  margin: 0;
-  text-align: center;
-  font-size: clamp(1.8rem, min(7vw, 5.5vh), 4.6rem);
-  font-weight: 700;
-  line-height: 1;
-  color: white;
-  -webkit-text-stroke: 7px var(--grape);
-  paint-order: stroke fill;
-  text-shadow: 0 6px 0 rgba(91, 58, 140, 0.55), 0 14px 24px rgba(91, 58, 140, 0.35);
-}
-
-.hub__title span {
-  display: block;
-  font-size: 1.25em;
-  color: var(--butter);
-}
-
-.hub__games {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(12px, 3vw, 36px);
-}
-
-.game-card {
+  inset: 0;
   display: grid;
   place-items: center;
-  width: clamp(112px, min(22vw, 24vh), 240px);
-  aspect-ratio: 4 / 5;
-  padding: 0;
-  border: var(--outline);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.game-card--soon {
-  filter: saturate(0.55);
-}
-
-.game-card__icon {
-  z-index: 1;
-  width: 70%;
-  filter: drop-shadow(0 6px 4px rgba(91, 58, 140, 0.3));
-}
-
-.game-card__icon svg {
-  display: block;
-  width: 100%;
-}
-
-.game-card__badge {
-  position: absolute;
-  z-index: 1;
-  right: -12px;
-  bottom: -14px;
-  display: grid;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border: var(--outline);
-  border-radius: 50%;
-  background: var(--cream);
-  box-shadow: var(--shadow);
-}
-
-.game-card__badge svg {
-  width: 60%;
-}
-
-.game-card__badge--play {
-  background: var(--pink-deep);
-  animation: hub-pulse 1.4s ease-in-out infinite;
-}
-
-@keyframes hub-pulse {
-  0%, 100% { scale: 1; }
-  50% { scale: 1.12; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hub__bunting i, .hub__balloon, .game-card__badge--play { animation: none; }
+  font-size: 4rem;
 }
 
 .hub__name {
+  position: absolute;
+  z-index: 10;
+  top: calc(var(--edge) + var(--safe-top));
+  left: calc(var(--edge) + var(--safe-left));
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: clamp(64px, 10vh, 88px);
+  min-height: var(--corner);
+  max-width: calc(100% - var(--corner) - var(--edge) * 3 - var(--safe-left) - var(--safe-right));
   padding: 8px 24px;
   border: var(--outline);
   border-radius: var(--radius);
@@ -194,9 +35,173 @@
   box-shadow: var(--shadow);
   font-size: 1.8rem;
   font-weight: 700;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .hub__name svg {
+  flex: none;
   width: 32px;
   height: 32px;
+}
+
+.hub-banner {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  top: 0;
+  width: min(520px, 80vw);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.hub-banner svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.hub-banner__text {
+  font-family: 'Fredoka', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 54px;
+  fill: white;
+  stroke: var(--grape);
+  stroke-width: 9px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+
+.hub-prompt {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--edge) + 56px + var(--safe-bottom));
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hub-prompt > * {
+  pointer-events: auto;
+}
+
+.hub-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 110px;
+  padding: 10px 40px 10px 22px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--pink-deep);
+  box-shadow: var(--shadow);
+  color: white;
+  font-size: 3rem;
+  font-weight: 700;
+  -webkit-text-stroke: 6px var(--grape);
+  paint-order: stroke fill;
+  animation: hub-pulse 1.2s ease-in-out infinite;
+}
+
+.hub-play__icon {
+  width: 84px;
+  height: 84px;
+  padding: 8px;
+  border: var(--outline);
+  border-radius: 50%;
+  background: var(--cream);
+  -webkit-text-stroke: 0;
+}
+
+.hub-play__icon svg,
+.hub-soon__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hub-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 84px;
+  padding: 8px 32px 8px 16px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--cream);
+  box-shadow: var(--shadow);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.hub-soon__icon {
+  width: 60px;
+  height: 60px;
+}
+
+@keyframes hub-pulse {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.07; }
+}
+
+.hub-shelf {
+  position: absolute;
+  z-index: 10;
+  left: calc(var(--edge) + var(--safe-left));
+  bottom: calc(var(--edge) + var(--safe-bottom));
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: calc(100% - var(--edge) * 2 - var(--safe-left) - var(--safe-right));
+  padding: 6px 12px;
+  border: var(--outline);
+  border-radius: 999px;
+  background: var(--cream);
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+
+.hub-shelf svg {
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+
+.hub-shelf b {
+  font-size: 1.4rem;
+}
+
+.hub-hint {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  bottom: calc(var(--edge) + var(--safe-bottom));
+  translate: -50% 0;
+  width: max-content;
+  max-width: calc(100% - 140px);
+  padding: 10px 22px;
+  border: var(--outline);
+  border-radius: var(--radius);
+  background: var(--cream);
+  box-shadow: var(--shadow);
+  font-size: 1.3rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Phones: smaller prompt and banner so the island stays visible. */
+@media (max-width: 600px), (max-height: 500px) {
+  .hub__name { font-size: 1.3rem; padding: 6px 16px; }
+  .hub-play { min-height: 84px; font-size: 2.2rem; gap: 12px; padding: 8px 28px 8px 14px; }
+  .hub-play__icon { width: 62px; height: 62px; }
+  .hub-soon { font-size: 1.4rem; min-height: 64px; }
+  .hub-soon__icon { width: 44px; height: 44px; }
+  .hub-banner__text { font-size: 46px; }
+  .hub-hint { font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-play { animation: none; }
 }

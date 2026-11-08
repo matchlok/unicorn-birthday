@@ -368,18 +368,20 @@ Card back: a lavender card with a white star-and-horn emblem, in `Card.tsx`.
 
 **Done when:** all logic tests pass. In the browser, all three difficulties play to a win, rapid clicking never shows three face-up cards, and the hard grid fits on a 1366×768 window. **Then the real test:** a 4-year-old finishes Easy without help and asks to play again.
 
-### Phase 3: Party hub (3D)
+### Phase 3: Party hub (3D) (built 2026-11-08, checked in headless Chromium only)
+
+Built as planned except: no real shadows (blob shadows, fewer draw calls), booths stand behind each pad as seen from the fixed camera and face it, the banner is DOM text projected from a scene point, and pads are laid out from the registry. Each game gets a "display": glowing pad, little booth, spinning icon. Draw calls: about 149 (budget 150). Initial JS about 360 KB gzipped.
 
 Replaces the placeholder hub. Everything is in one R3F `<Canvas shadows dpr={[1, 2]}>`.
 
 #### 3a. Scene (`Island.tsx`)
-- [ ] A round grass island: a flattened cylinder, radius 12, height 1.5, `--grass` top and a peach "cake layer" side so the island itself looks like a cake. It floats in the gradient sky (canvas `alpha` with the CSS gradient behind it).
-- [ ] A giant three-tier birthday cake at the center (stacked cylinders: pink, cream, lavender, with sphere "frosting dots" around each rim), five candles with flickering flame spheres (scale jitter in `useFrame`). It's a collision obstacle with radius 2.2.
-- [ ] Six to eight balloons around the edge (spheres plus thin line strings) bobbing on a sine wave with random phases.
-- [ ] Four or five presents (`RoundedBox` with crossed ribbon boxes) as decoration and obstacles.
-- [ ] Bunting: a triangle-flag string looping between two poles behind the cake.
-- [ ] `BirthdayBanner.tsx`: drei `<Text>` (or `<Html>`) arching over the cake, "Happy Birthday, <name>!" in Fredoka. Load the font file from Google Fonts' TTF or bundle it in `public/fonts/`.
-- [ ] Little floating sparkles (drei `<Sparkles>`, count about 40, pastel colors).
+- [x] A round grass island: a flattened cylinder, radius 12, height 1.5, `--grass` top and a peach "cake layer" side so the island itself looks like a cake. It floats in the gradient sky (canvas `alpha` with the CSS gradient behind it).
+- [x] A giant three-tier birthday cake at the center (stacked cylinders: pink, cream, lavender, with sphere "frosting dots" around each rim), five candles with flickering flame spheres (scale jitter in `useFrame`). It's a collision obstacle with radius 2.2.
+- [x] Six to eight balloons around the edge (spheres plus thin line strings) bobbing on a sine wave with random phases.
+- [x] Four or five presents (`RoundedBox` with crossed ribbon boxes) as decoration and obstacles.
+- [x] Bunting: a triangle-flag string looping between two poles behind the cake.
+- [x] `BirthdayBanner.tsx`: drei `<Text>` (or `<Html>`) arching over the cake, "Happy Birthday, <name>!" in Fredoka. Load the font file from Google Fonts' TTF or bundle it in `public/fonts/`.
+- [x] Little floating sparkles (drei `<Sparkles>`, count about 40, pastel colors).
 
 #### 3b. Unicorn model (`UnicornModel.tsx`)
 Built from primitives, about 1.2 units tall, all `MeshToonMaterial`:
@@ -394,26 +396,26 @@ Built from primitives, about 1.2 units tall, all `MeshToonMaterial`:
 
 #### 3c. Movement (`Player.tsx`)
 No physics engine in the hub. Use simple kinematic movement:
-- [ ] Read `useKeys()` in `useFrame`. Arrows and WASD move on the XZ plane **relative to the camera** (up = away from the camera). Speed is 4 units/s with damped acceleration so it doesn't feel twitchy.
-- [ ] The unicorn turns smoothly to face her movement direction (`damp` on the rotation, shortest-angle).
-- [ ] Collision: clamp to island radius minus 1. Push out of the cake circle and present circles (circle-vs-circle, unicorn radius 0.6).
-- [ ] **Click-to-walk:** clicking the ground (an invisible plane with `onClick`) or a pad sets a target point. The unicorn walks there in a straight line, sliding around obstacles with the same push-out. Any arrow key press cancels the target.
-- [ ] Camera: a fixed offset behind and above, about (0, 7, 9), looking at the unicorn, following with damping. It's Mario Party's angled board view, not orbit controls.
-- [ ] `step` sound while moving, throttled.
-- [ ] Spawn at `hubSpawn` if set, otherwise in front of the cake facing the camera.
+- [x] Read `useKeys()` in `useFrame`. Arrows and WASD move on the XZ plane **relative to the camera** (up = away from the camera). Speed is 4 units/s with damped acceleration so it doesn't feel twitchy.
+- [x] The unicorn turns smoothly to face her movement direction (`damp` on the rotation, shortest-angle).
+- [x] Collision: clamp to island radius minus 1. Push out of the cake circle and present circles (circle-vs-circle, unicorn radius 0.6).
+- [x] **Click-to-walk:** clicking the ground (an invisible plane with `onClick`) or a pad sets a target point. The unicorn walks there in a straight line, sliding around obstacles with the same push-out. Any arrow key press cancels the target.
+- [x] Camera: a fixed offset behind and above, about (0, 7, 9), looking at the unicorn, following with damping. It's Mario Party's angled board view, not orbit controls.
+- [x] `step` sound while moving, throttled.
+- [x] Spawn at `hubSpawn` if set, otherwise in front of the cake facing the camera.
 
 #### 3d. Landing pads (`LandingPad.tsx`, `PadPrompt.tsx`)
 Three pads placed at 120° apart around the cake, radius about 7 from the center, so they're far enough apart that a child reaches one at a time.
-- [ ] Each pad is a slightly raised disc (radius 1.6) in its `padColor`, with a glowing emissive ring that pulses, and a floating icon above it that spins slowly and bobs. Icons are built from primitives: **cards** (two tilted rounded boxes with a star), **kart** (a little rounded box on four torus wheels), **present** (box with ribbon and a "?").
-- [ ] Pad status visuals: `ready` pads glow. `locked` pads are greyed with a padlock icon. `coming-soon` pads have the present icon and a softer glow.
-- [ ] Proximity: when the unicorn's center is within the pad radius, the pad is "active". Its ring brightens, `padEnter` plays once, and the icon jumps.
-- [ ] `PadPrompt` (a DOM overlay outside the Canvas, centered at the bottom): for a `ready` pad, a huge pink "Play!" button with the game icon. Clicking it, or pressing Space or Enter, saves `hubSpawn` and goes to the game. For `locked` or `coming-soon` pads, it shows a padlock or present with "Coming soon!" and plays `locked`. There's no Play button.
-- [ ] Clicking a pad directly walks the unicorn onto it (click-to-walk target = pad center), which then triggers the prompt. One click and one more click on Play gets a child into a game.
+- [x] Each pad is a slightly raised disc (radius 1.6) in its `padColor`, with a glowing emissive ring that pulses, and a floating icon above it that spins slowly and bobs. Icons are built from primitives: **cards** (two tilted rounded boxes with a star), **kart** (a little rounded box on four torus wheels), **present** (box with ribbon and a "?").
+- [x] Pad status visuals: `ready` pads glow. `locked` pads are greyed with a padlock icon. `coming-soon` pads have the present icon and a softer glow.
+- [x] Proximity: when the unicorn's center is within the pad radius, the pad is "active". Its ring brightens, `padEnter` plays once, and the icon jumps.
+- [x] `PadPrompt` (a DOM overlay outside the Canvas, centered at the bottom): for a `ready` pad, a huge pink "Play!" button with the game icon. Clicking it, or pressing Space or Enter, saves `hubSpawn` and goes to the game. For `locked` or `coming-soon` pads, it shows a padlock or present with "Coming soon!" and plays `locked`. There's no Play button.
+- [x] Clicking a pad directly walks the unicorn onto it (click-to-walk target = pad center), which then triggers the prompt. One click and one more click on Play gets a child into a game.
 
 #### 3e. Hub UI
-- [ ] Top-right: `MuteButton`. Top-left: the unicorn's name with a small pencil icon (opens `NameScreen`).
-- [ ] Sticker shelf (bottom-left): one small star per Memory Match win, up to 10, then "10+". Stickers survive reload.
-- [ ] A one-time hint for the grown-up on first visit: a small bubble near the bottom, "Use the arrow keys or click to walk to a pad!", that disappears after the first move.
+- [x] Top-right: `MuteButton`. Top-left: the unicorn's name with a small pencil icon (opens `NameScreen`).
+- [x] Sticker shelf (bottom-left): one small star per Memory Match win, up to 10, then "10+". Stickers survive reload.
+- [x] A one-time hint for the grown-up on first visit: a small bubble near the bottom, "Use the arrow keys or click to walk to a pad!", that disappears after the first move.
 
 **Done when:**
 - The unicorn walks around with arrows and with clicks, can't leave the island or walk through the cake, and the camera follows smoothly.
