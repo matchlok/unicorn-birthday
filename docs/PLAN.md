@@ -481,20 +481,20 @@ Added 2026-11-08. iPhone first (390x844 portrait is the target, 375x667 iPhone S
 - **Smaller things that will bite next:** the difficulty picker's five 190x260 cards wrap into one column and get cut off; `100vh` on iOS Safari includes the hidden toolbar, so bottoms get clipped; nothing respects the notch or home-bar safe areas; double-tap zooms the page; long-press selects or opens the callout; win screens put three big buttons in one row (too wide for a phone).
 
 #### 6a. Shared groundwork
-- [ ] `index.html` viewport: `width=device-width, initial-scale=1, viewport-fit=cover`. Add `apple-mobile-web-app-capable` and a theme color so "Add to Home Screen" runs full screen.
-- [ ] `global.css`: `touch-action: manipulation` (no double-tap zoom), `-webkit-touch-callout: none`, `-webkit-tap-highlight-color: transparent`. Swap `100vh` for `100dvh` everywhere (hub, board, win screens).
-- [ ] Safe areas: corner buttons, kart HUD and touch controls offset by `env(safe-area-inset-*)`.
-- [ ] Layout tokens in `tokens.css` for small screens: a `--corner` size (88px desktop, 72px phone; still a thumb-sized target) and `--edge` gap (16px, 10px phone). Use one breakpoint, `(max-width: 600px)`, plus orientation queries where layout flips.
-- [ ] Audio: confirm the Web Audio context resumes on the first `touchend`/`pointerup` on iOS (it already resumes on click; check it in Safari). Note for grown-ups: the iPhone silent switch mutes Web Audio.
+- [x] `index.html` viewport: `width=device-width, initial-scale=1, viewport-fit=cover`. Add `apple-mobile-web-app-capable` and a theme color so "Add to Home Screen" runs full screen.
+- [x] `global.css`: `touch-action: manipulation` (no double-tap zoom), `-webkit-touch-callout: none`, `-webkit-tap-highlight-color: transparent`. Swap `100vh` for `100dvh` everywhere (hub, board, win screens).
+- [x] Safe areas: corner buttons, kart HUD and touch controls offset by `env(safe-area-inset-*)`.
+- [x] Layout tokens in `tokens.css` for small screens: a `--corner` size (88px desktop, 72px phone; still a thumb-sized target) and `--edge` gap (16px, 10px phone). Use one breakpoint, `(max-width: 600px)`, plus orientation queries where layout flips.
+- [x] Audio on iOS (built 2026-11-08, **needs a real-iPhone check**): the unlock listened for `pointerdown`, which iOS Safari doesn't accept, so music never started. Now it listens on `touchend`, `click`, `pointerup` and `keydown` until the context is running, plays a silent sample in the gesture, sets `navigator.audioSession.type = 'playback'` (so the silent switch doesn't mute it, Safari 17+) and falls back to `webkitAudioContext`.
 - [ ] `whileHover` wiggles can stick after a tap on touch. Gate them behind `@media (hover: hover)` or Motion's hover (which ignores touch); check by eye.
 
 #### 6b. Memory Match on a phone
-- [ ] **Flip the grid in portrait.** When the screen is taller than wide, lay the deck out as rows x cols instead of cols x rows (5x4 becomes 4x5, 3x2 becomes 2x3). Card order is just an index, so `logic.ts` doesn't change. Pick the layout in `Board.tsx` from a small `useOrientation()` hook (matchMedia `(orientation: portrait)`), and pass the effective `cols` to keyboard focus movement too.
-- [ ] **Size cards from the space actually free.** Drop the 120px floor. In portrait, reserve a top band for the corner buttons instead of 240px of side width; in landscape keep the side reserve. Gap shrinks to 10px on phones. Expected card width on 390x844: about 80px for 4 columns (5 stars), about 110px for 3 columns (1 to 3 stars all fit 3 or 4 wide). Pure helper `boardLayout(viewport, cols, rows) -> { cols, rows, cardW }` in `layout.ts` with Vitest cases for iPhone SE, iPhone 15, iPad portrait and landscape, and the laptop.
-- [ ] Hide the grown-up `moves` label on phones (it collides with the bottom row).
-- [ ] **Difficulty picker:** on phones, a 2-column grid of smaller cards (about 150x170) with the 5-star card spanning both columns, so all five fit without scrolling. Shrink the dot preview to match.
-- [ ] Win screen: buttons wrap, or stack in a column, under 600px.
-- [ ] Rule check: 4-star and 5-star cards come out around 80px, under the 88px rule. Accept this for 4 and 5 stars only (those are for older kids or grown-ups); 1 to 3 stars must stay 88px or bigger.
+- [x] **Flip the grid in portrait.** When the screen is taller than wide, lay the deck out as rows x cols instead of cols x rows (5x4 becomes 4x5, 3x2 becomes 2x3). Card order is just an index, so `logic.ts` doesn't change. Pick the layout in `Board.tsx` from a small `useOrientation()` hook (matchMedia `(orientation: portrait)`), and pass the effective `cols` to keyboard focus movement too.
+- [x] **Size cards from the space actually free.** Drop the 120px floor. In portrait, reserve a top band for the corner buttons instead of 240px of side width; in landscape keep the side reserve. Gap shrinks to 10px on phones. Expected card width on 390x844: about 80px for 4 columns (5 stars), about 110px for 3 columns (1 to 3 stars all fit 3 or 4 wide). Pure helper `boardLayout(viewport, cols, rows) -> { cols, rows, cardW }` in `layout.ts` with Vitest cases for iPhone SE, iPhone 15, iPad portrait and landscape, and the laptop.
+- [x] Hide the grown-up `moves` label on phones (it collides with the bottom row).
+- [x] **Difficulty picker:** on phones, a 2-column grid of smaller cards (about 150x170) with the 5-star card spanning both columns, so all five fit without scrolling. Shrink the dot preview to match.
+- [x] Win screen: buttons wrap, or stack in a column, under 600px.
+- [x] Rule check: 4-star and 5-star cards come out around 80px, under the 88px rule. Accept this for 4 and 5 stars only (those are for older kids or grown-ups); 1 to 3 stars must stay 88px or bigger.
 
 #### 6c. Kart Racing touch controls
 - [ ] **On-screen pedals, shown only on touch devices** (`(pointer: coarse)` or the first `touchstart`). Left thumb: two big steer buttons, ◀ and ▶. Right thumb: one big green "go" pedal, with a small "back" pedal above it. Each is 96px or more, sits in the bottom corners inside the safe area, and gives a squish plus a click sound on press. Reuse the existing key-cap look so the art matches the keyboard hint.

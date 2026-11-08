@@ -31,7 +31,10 @@ const midi = (n: number) => 440 * 2 ** ((n - 69) / 12)
 function setup(): AudioContext | null {
   if (ctx) return ctx
   try {
-    ctx = new AudioContext()
+    // Older iOS Safari only has the prefixed constructor.
+    const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+    if (!Ctor) return null
+    ctx = new Ctor()
   } catch {
     return null
   }
@@ -194,12 +197,41 @@ export function setMuted(value: boolean): void {
   else if (unlocked) startMusic()
 }
 
-// Browsers block audio until a user gesture; the first one starts the music.
+// iOS plays Web Audio on the "ambient" channel, which the ring/silent switch mutes. Asking for
+// "playback" makes it sound like a game instead (Safari 17+; harmless where unsupported).
+function requestMediaChannel(): void {
+  try {
+    const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession
+    if (session) session.type = 'playback'
+  } catch {
+    // ignore
+  }
+}
+
+// One silent sample played inside the gesture is what finally unlocks iOS Safari.
+function playSilence(c: AudioContext): void {
+  const src = c.createBufferSource()
+  src.buffer = c.createBuffer(1, 1, 22050)
+  src.connect(c.destination)
+  src.start(0)
+}
+
+// True once the context is actually producing sound; callers keep listening until then.
+export function isAudioRunning(): boolean {
+  return ctx?.state === 'running'
+}
+
+// Browsers block audio until a user gesture; the first one starts the music. Call it from
+// touchend/click/keydown (iOS Safari does NOT count pointerdown or touchstart). Safe to call
+// on every gesture: it also re-wakes a context iOS suspended or "interrupted" (a call, Siri).
 export function unlockAudio(): void {
   try {
     unlocked = true
-    setup()
-    void ctx?.resume()
+    requestMediaChannel()
+    const c = setup()
+    if (!c) return
+    void c.resume()
+    playSilence(c)
     startMusic()
   } catch {
     // ignore
