@@ -244,6 +244,7 @@ export function unlockAudio(): void {
   try {
     unlocked = true
     requestMediaChannel()
+    playMediaChannelClip()
     const c = setup()
     if (!c) return
     void c.resume()
