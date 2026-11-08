@@ -4,9 +4,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: safe center; /* centred when it fits, top-aligned (scrollable) when not */
-  gap: clamp(16px, 4vh, 48px);
-  height: 100%;
-  padding: 56px 24px 32px;
+  gap: clamp(8px, 2.5vh, 48px);
+  position: absolute;
+  inset: 0;
+  padding: calc(clamp(32px, 6vh, 56px) + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -86,7 +87,7 @@
 }
 
 .hub__unicorn {
-  width: clamp(120px, 24vh, 220px);
+  width: clamp(84px, 17vh, 220px);
   aspect-ratio: 1;
   filter: drop-shadow(0 14px 14px rgba(91, 58, 140, 0.3)) drop-shadow(0 0 28px rgba(255, 255, 255, 0.8));
 }
@@ -99,7 +100,7 @@
 .hub__title {
   margin: 0;
   text-align: center;
-  font-size: clamp(2.2rem, 7vw, 4.6rem);
+  font-size: clamp(1.8rem, min(7vw, 5.5vh), 4.6rem);
   font-weight: 700;
   line-height: 1;
   color: white;
@@ -119,13 +120,13 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: clamp(16px, 3vw, 36px);
+  gap: clamp(12px, 3vw, 36px);
 }
 
 .game-card {
   display: grid;
   place-items: center;
-  width: clamp(150px, 22vw, 240px);
+  width: clamp(112px, min(22vw, 24vh), 240px);
   aspect-ratio: 4 / 5;
   padding: 0;
   border: var(--outline);
@@ -185,8 +186,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  min-height: 88px;
-  padding: 8px 28px;
+  min-height: clamp(64px, 10vh, 88px);
+  padding: 8px 24px;
   border: var(--outline);
   border-radius: var(--radius);
   background: var(--cream);
