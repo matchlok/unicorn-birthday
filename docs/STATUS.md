@@ -9,4 +9,4 @@ Moved out of `AGENTS.md` so the agent guide stays short. `AGENTS.md` keeps only 
 
 ## iPhone and iPad (Phase 6)
 
-6a (groundwork, iOS audio unlock) and 6b (Memory Match portrait grid, picker, win buttons) built 2026-11-08; `layout.ts` has 7 tests, 59 total pass. Checked in Playwright phone emulation only. Reported 2026-11-07 on a real phone: scrolling doesn't work and music doesn't play. Still to do: 6c kart touch controls, 6d hub and name screen, 6e iPad.
+6a (groundwork, iOS audio unlock) and 6b (Memory Match portrait grid, picker, win buttons) built 2026-11-08; `layout.ts` has 7 tests, 59 total pass. Checked in Playwright phone emulation only. Reported 2026-11-07 on a real phone: scrolling doesn't work and music doesn't play. Still to do: 6c kart touch controls, 6d hub and name screen, 6e iPad. 2026-11-08: name screen was clipped on iPhone (overflow hidden); now a scroll container like the hub, with smaller sizes under 480px. Checked in emulation at 390×520.

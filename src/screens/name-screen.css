@@ -1,10 +1,19 @@
 .name {
-  position: relative;
-  display: grid;
-  place-items: center;
-  height: 100%;
-  padding: 0 24px;
-  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center; /* centred when it fits, top-aligned (scrollable) when not */
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.name > * {
+  flex-shrink: 0; /* overflow and scroll instead of squashing the panel to fit */
 }
 
 .name__panel {
@@ -14,7 +23,7 @@
   align-items: center;
   gap: clamp(12px, 2.5vh, 24px);
   width: min(620px, 100%);
-  padding: clamp(16px, 3vh, 32px) 32px;
+  padding: clamp(16px, 3vh, 32px) clamp(16px, 5vw, 32px);
   border: var(--outline);
   border-radius: var(--radius);
   background: var(--cream);
@@ -70,4 +79,25 @@
   box-shadow: var(--shadow);
   font-size: 1.5rem;
   font-weight: 700;
+}
+
+/* Small phones: keep the whole panel close to one screen. */
+@media (max-width: 480px) {
+  .name__unicorn {
+    width: clamp(96px, 18vh, 160px);
+  }
+
+  .name__input {
+    min-height: 72px;
+    font-size: 2rem;
+  }
+
+  .name__chips {
+    gap: 12px;
+  }
+
+  .name__chip {
+    min-height: 72px;
+    padding: 8px 18px;
+  }
 }
