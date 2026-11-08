@@ -15,12 +15,19 @@ html, body, #root {
   }
 }
 
+/* The gradient lives on html as well, so nothing white can show beside the notch or under the
+   toolbar when a phone is turned sideways (iOS ignores background-attachment: fixed on body). */
+html {
+  background: var(--lavender) linear-gradient(to top, var(--pink), var(--lavender));
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
 body {
   font-family: 'Fredoka', system-ui, sans-serif;
   font-weight: 500;
   color: var(--grape);
-  background: linear-gradient(to top, var(--pink), var(--lavender));
-  background-attachment: fixed;
+  background: transparent;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
@@ -38,7 +45,8 @@ input {
 }
 
 #root {
-  position: relative;
+  position: fixed;
+  inset: 0;
   overflow: hidden;
 }
 
