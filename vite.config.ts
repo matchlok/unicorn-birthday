@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config'
 // https://vite.dev/config/
 export default defineConfig({
   base: '/unicorn/',
+  build: { outDir: 'dist/unicorn' },
   plugins: [react()],
   test: {
     environment: 'jsdom',

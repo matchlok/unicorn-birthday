@@ -1,0 +1,6 @@
+{
+  "framework": "vite",
+  "outputDirectory": "dist",
+  "redirects": [{ "source": "/", "destination": "/unicorn/", "permanent": false }],
+  "rewrites": [{ "source": "/unicorn/(.*)", "destination": "/unicorn/index.html" }]
+}
