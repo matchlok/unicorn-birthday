@@ -15,7 +15,7 @@ This file is the source of truth for building it. A new session should read [../
 | Games | Pad 1 Memory Match (build now). Pad 2 Kart Racing (Phase 4, locked until then). Pad 3 "coming soon" present. |
 | Characters | The player names the unicorn. No friend characters in the hub for now. Creatures appear only on memory cards. |
 | Audio | Sound effects only. No voice lines. Mute toggle in the corner. |
-| Platform | Desktop web with keyboard and mouse. Keep layouts and hit targets touch-friendly so iPad works later without a rewrite, but don't build touch controls yet. |
+| Platform | Desktop web with keyboard and mouse first. As of 2026-11-08, iPhone then iPad are in scope: touch controls and small-screen layouts (Phase 6). |
 | Hosting | Its own Vercel project, built with base path `/unicorn/`. The portfolio (Next.js 15) proxies `/unicorn/*` to it with a rewrite. |
 | Art | "Toy-box diorama": rounded, low-poly, pastel, bouncy (section 3). |
 | Engine | Vite + React + TypeScript + React Three Fiber (section 4). |
@@ -471,6 +471,55 @@ Built without Rapier: arcade kinematics in `logic.ts` fit the "walls only slow y
 - [ ] `CREDITS.md` complete. A small "credits" link on the hub (for grown-ups) shows it.
 - [ ] Short portfolio write-up: what it is, the stack, and one or two things learned.
 
+### Phase 6: iPhone and iPad (touch and small screens)
+
+Added 2026-11-08. iPhone first (390x844 portrait is the target, 375x667 iPhone SE the smallest), then iPad. Keyboard and mouse keep working exactly as now.
+
+**What's broken on iPhone today, and why:**
+- **Memory Match cards run off the screen after 3 columns.** `.mm-board` in `memory-match.css` sizes cards as `max(120px, ...)` and subtracts 240px of width for the corner buttons. On a 390px-wide phone the real fit is about 40px, so the 120px floor wins and 4 or 5 columns (3 x 120 + gaps is already 392px) overflow. `body` is `overflow: hidden`, so the extra columns are just cut off.
+- **Kart Racing has no way to drive.** `useKeys.ts` only reads the keyboard. The arrow pictures in `DriveHint` look like buttons but aren't.
+- **Smaller things that will bite next:** the difficulty picker's five 190x260 cards wrap into one column and get cut off; `100vh` on iOS Safari includes the hidden toolbar, so bottoms get clipped; nothing respects the notch or home-bar safe areas; double-tap zooms the page; long-press selects or opens the callout; win screens put three big buttons in one row (too wide for a phone).
+
+#### 6a. Shared groundwork
+- [x] `index.html` viewport: `width=device-width, initial-scale=1, viewport-fit=cover`. Add `apple-mobile-web-app-capable` and a theme color so "Add to Home Screen" runs full screen.
+- [x] `global.css`: `touch-action: manipulation` (no double-tap zoom), `-webkit-touch-callout: none`, `-webkit-tap-highlight-color: transparent`. Swap `100vh` for `100dvh` everywhere (hub, board, win screens).
+- [x] Safe areas: corner buttons, kart HUD and touch controls offset by `env(safe-area-inset-*)`.
+- [x] Layout tokens in `tokens.css` for small screens: a `--corner` size (88px desktop, 72px phone; still a thumb-sized target) and `--edge` gap (16px, 10px phone). Use one breakpoint, `(max-width: 600px)`, plus orientation queries where layout flips.
+- [x] Audio on iOS (built 2026-11-08, **needs a real-iPhone check**): the unlock listened for `pointerdown`, which iOS Safari doesn't accept, so music never started. Now it listens on `touchend`, `click`, `pointerup` and `keydown` until the context is running, plays a silent sample in the gesture, sets `navigator.audioSession.type = 'playback'` (so the silent switch doesn't mute it, Safari 17+) and falls back to `webkitAudioContext`.
+- [ ] `whileHover` wiggles can stick after a tap on touch. Gate them behind `@media (hover: hover)` or Motion's hover (which ignores touch); check by eye.
+
+#### 6b. Memory Match on a phone
+- [x] **Flip the grid in portrait.** When the screen is taller than wide, lay the deck out as rows x cols instead of cols x rows (5x4 becomes 4x5, 3x2 becomes 2x3). Card order is just an index, so `logic.ts` doesn't change. Pick the layout in `Board.tsx` from a small `useOrientation()` hook (matchMedia `(orientation: portrait)`), and pass the effective `cols` to keyboard focus movement too.
+- [x] **Size cards from the space actually free.** Drop the 120px floor. In portrait, reserve a top band for the corner buttons instead of 240px of side width; in landscape keep the side reserve. Gap shrinks to 10px on phones. Expected card width on 390x844: about 80px for 4 columns (5 stars), about 110px for 3 columns (1 to 3 stars all fit 3 or 4 wide). Pure helper `boardLayout(viewport, cols, rows) -> { cols, rows, cardW }` in `layout.ts` with Vitest cases for iPhone SE, iPhone 15, iPad portrait and landscape, and the laptop.
+- [x] Hide the grown-up `moves` label on phones (it collides with the bottom row).
+- [x] **Difficulty picker:** on phones, a 2-column grid of smaller cards (about 150x170) with the 5-star card spanning both columns, so all five fit without scrolling. Shrink the dot preview to match.
+- [x] Win screen: buttons wrap, or stack in a column, under 600px.
+- [x] Rule check: 4-star and 5-star cards come out around 80px, under the 88px rule. Accept this for 4 and 5 stars only (those are for older kids or grown-ups); 1 to 3 stars must stay 88px or bigger.
+
+#### 6c. Kart Racing touch controls
+- [ ] **On-screen pedals, shown only on touch devices** (`(pointer: coarse)` or the first `touchstart`). Left thumb: two big steer buttons, ◀ and ▶. Right thumb: one big green "go" pedal, with a small "back" pedal above it. Each is 96px or more, sits in the bottom corners inside the safe area, and gives a squish plus a click sound on press. Reuse the existing key-cap look so the art matches the keyboard hint.
+- [ ] Multi-touch: steer and go at the same time. Use pointer events with `setPointerCapture`, track pressed buttons per pointer id, and release on `pointerup`, `pointercancel` and `blur` so a finger sliding off never leaves the kart stuck.
+- [ ] Merge sources in one input hook: rename `useKeys` to `useDriveInput`, which returns the same `DriveInput` from keys OR touch. `logic.ts` doesn't change. Keep the merge pure (`combineInput(keys, touch)`) and test it.
+- [ ] Honk: tap the kart, or a small horn button near the top.
+- [ ] `DriveHint` on touch: point at the go pedal (pulsing hand) instead of showing keyboard keys.
+- [ ] Orientation: the race is best in landscape. In portrait, still playable (raise the camera FOV a little so the road isn't a sliver), plus a friendly "turn me sideways" phone picture that fades on its own. Never blocks play.
+- [ ] Option to try with the kid if steering is too hard: "auto-go", where the kart rolls forward on its own and the child only steers. Build it behind a constant, decide after a kid test.
+
+#### 6d. Hub, name screen, the rest
+- [ ] Hub: game cards about 140px wide in a row that fits (3 across on a 390px phone, or 2 plus 1); shrink the unicorn and title by height so nothing is cut off in landscape.
+- [ ] Name screen: when the iOS keyboard opens, the input and OK button stay visible (use `visualViewport` or a top-aligned layout on phones).
+- [ ] Confirm-leave panel fits on 375px wide.
+
+#### 6e. iPad (after iPhone)
+- [ ] Most of this falls out of 6a to 6d. Check 820x1180 and 1024x1366 in both orientations: memory cards should land around 140 to 180px; pedals stay in the corners.
+- [ ] Optional PWA manifest so it can live on the home screen (Later ideas, section 10).
+
+#### Done when
+- [ ] Playwright screenshots (device emulation: iPhone SE, iPhone 15, iPad Air, both orientations) of the hub, picker, every Memory Match difficulty, the kart race and both win screens: nothing cut off, nothing scrolls.
+- [ ] Build, lint and all tests pass, including the new `boardLayout` and `combineInput` tests.
+- [ ] On a real iPhone in Safari: finish Memory Match Easy and Expert by tapping, and drive one kart lap with thumbs, sounds on.
+- [ ] Desktop still plays exactly as before.
+
 ---
 
 ## 8. Testing approach
@@ -485,7 +534,7 @@ _(Add dated notes here after each play session.)_
 
 ## 10. Later ideas (not planned)
 
-- iPad: touch joystick for the hub and kart, and an "Add to Home Screen" PWA manifest.
+- iPad: touch joystick for the 3D hub (kart touch controls and phone layouts moved to Phase 6), and an "Add to Home Screen" PWA manifest.
 - Recorded voice lines.
 - Friend characters (witch, dragon, and others) at the party.
 - More creatures and themed card decks.

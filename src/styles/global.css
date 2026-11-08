@@ -8,6 +8,13 @@ html, body, #root {
   margin: 0;
 }
 
+/* iOS Safari: 100% can run under the toolbar; dvh tracks the visible screen. */
+@supports (height: 100dvh) {
+  html, body, #root {
+    height: 100dvh;
+  }
+}
+
 body {
   font-family: 'Fredoka', system-ui, sans-serif;
   font-weight: 500;
@@ -15,8 +22,19 @@ body {
   background: linear-gradient(to top, var(--pink), var(--lavender));
   background-attachment: fixed;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation; /* no double-tap zoom */
   overscroll-behavior: none;
   overflow: hidden;
+}
+
+/* The name field is the one place text is selectable. */
+input {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 #root {

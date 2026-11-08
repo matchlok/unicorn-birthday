@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { play } from '../../engine/audio'
 import { Card } from './Card'
+import { useBoardLayout } from './useBoardLayout'
 import { CREATURE_IDS } from './creatures'
 import { addPowers, buildDeck, DIFFICULTY, endPeek, flip, initialState, isWin, resolve, applyPower, type Difficulty, type GameState } from './logic'
 
@@ -13,7 +14,9 @@ const SWIRL_MS = 900
 type Props = { difficulty: Difficulty; onWin: () => void; paused?: boolean }
 
 export function Board({ difficulty, onWin, paused = false }: Props) {
-  const { cols, rows, pairs, peekMs, powers } = DIFFICULTY[difficulty]
+  const { cols: baseCols, rows: baseRows, pairs, peekMs, powers } = DIFFICULTY[difficulty]
+  // On a portrait phone the same deck is laid out turned on its side (5x4 becomes 4x5).
+  const { cols, rows, cardW, gap, margin } = useBoardLayout(baseCols, baseRows)
   const [state, setState] = useState<GameState>(() => initialState(addPowers(buildDeck(CREATURE_IDS, pairs), powers)))
   const [swirling, setSwirling] = useState(false)
   const [peeking, setPeeking] = useState(peekMs > 0)
@@ -93,7 +96,15 @@ export function Board({ difficulty, onWin, paused = false }: Props) {
   })
 
   return (
-    <div className="mm-board" style={{ ['--cols' as string]: cols, ['--rows' as string]: rows }}>
+    <div
+      className="mm-board"
+      style={{
+        ['--cols' as string]: cols,
+        ['--w' as string]: `${cardW}px`,
+        ['--gap' as string]: `${gap}px`,
+        margin: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
+      }}
+    >
       {state.cards.map((card, i) => (
         <Card
           key={card.uid}

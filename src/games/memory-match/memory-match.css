@@ -46,16 +46,9 @@
   opacity: 1;
 }
 
-/* Board: 3:4 cards sized to fit the viewport, leaving room for the corner buttons. */
+/* Board: 3:4 cards. Card width (--w), gap and the margin that clears the corner buttons and
+   notch are computed in layout.ts, so the grid always fits the screen. */
 .mm-board {
-  --gap: 16px;
-  --w: max(
-    120px,
-    min(
-      calc((100vw - 240px - (var(--cols) - 1) * var(--gap)) / var(--cols)),
-      calc((100vh - 32px - (var(--rows) - 1) * var(--gap)) * 0.75 / var(--rows))
-    )
-  );
   display: grid;
   grid-template-columns: repeat(var(--cols), var(--w));
   grid-auto-rows: calc(var(--w) * 4 / 3);
@@ -164,6 +157,94 @@
   bottom: 12px;
   color: grey;
   font-size: 0.9rem;
+}
+
+/* Phones */
+@media (max-width: 600px), (max-height: 500px) {
+  .mm-moves {
+    display: none;
+  }
+
+  .mm-win__buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .mm-win__title {
+    -webkit-text-stroke: 5px var(--grape);
+    text-shadow: 0 5px 0 var(--grape);
+  }
+}
+
+/* Portrait phone: five difficulty cards in two columns, the last one centred. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .mm-picker {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 150px));
+    justify-content: center;
+    gap: 14px;
+    margin-top: calc(var(--corner) + var(--edge));
+  }
+
+  .mm-picker__card {
+    width: 100%;
+    min-height: min(170px, 21dvh);
+    gap: 14px;
+    padding: 16px 8px;
+  }
+
+  .mm-picker__card svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .mm-picker__card:last-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 150px;
+  }
+
+  .mm-picker__dots {
+    grid-template-columns: repeat(var(--cols), 10px);
+    gap: 4px;
+  }
+
+  .mm-picker__dots i {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Landscape phone: one row of five short cards. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .mm-picker {
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+
+  .mm-picker__card {
+    width: 128px;
+    min-height: 0;
+    height: 150px;
+    gap: 10px;
+    padding: 12px 6px;
+  }
+
+  .mm-picker__card svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .mm-picker__dots {
+    grid-template-columns: repeat(var(--cols), 9px);
+    gap: 3px;
+  }
+
+  .mm-picker__dots i {
+    width: 9px;
+    height: 9px;
+  }
 }
 
 /* Win */
