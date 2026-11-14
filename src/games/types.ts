@@ -6,12 +6,12 @@ export type GameProps = {
   onExit: (result: GameResult) => void
 }
 
-export type GameId = 'memory-match' | 'kart-racing' | 'mystery'
+export type GameId = 'memory-match' | 'kart-racing' | 'rock-climb'
 
 export type GameEntry = {
   id: GameId
   padColor: string // CSS token value
-  icon: 'cards' | 'kart' | 'present'
+  icon: 'cards' | 'kart' | 'rocks' | 'present'
   status: 'ready' | 'locked' | 'coming-soon'
   component?: LazyExoticComponent<ComponentType<GameProps>>
 }
