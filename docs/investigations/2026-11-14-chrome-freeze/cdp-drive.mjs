@@ -10,7 +10,7 @@
 // sandboxed tab processes behind that Windows refuses to kill.
 
 import { spawn } from 'node:child_process'
-import { mkdtempSync } from 'node:fs'
+import { mkdtempSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 
@@ -119,13 +119,20 @@ try {
     await sample('NAME SCREEN')
     await evalJs(`(() => {
       const i = document.querySelector('input')
-      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(i, 'Sparkle')
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(i, ${JSON.stringify(args.find((a) => a.startsWith('--name='))?.split('=')[1] ?? 'Sparkle')})
       i.dispatchEvent(new Event('input', { bubbles: true }))
       ;[...document.querySelectorAll('button')].find((b) => /party/i.test(b.innerText))?.click()
     })()`)
     await sleep(1500)
   }
   log('page text:', JSON.stringify(await evalJs(`document.body.innerText.slice(0, 80)`)))
+  const shot = args.find((a) => a.startsWith('--shot='))?.slice(7)
+  if (shot) {
+    await sleep(2500)
+    const r = await send('Page.captureScreenshot', { format: 'png' })
+    writeFileSync(shot, Buffer.from(r.result.data, 'base64'))
+    log('screenshot', shot, '| banner font-size:', await evalJs(`getComputedStyle(document.querySelector('.hub-banner__text')).fontSize + ' text length ' + document.querySelector('.hub-banner__text').getComputedTextLength().toFixed(0)`))
+  }
   await sample('HUB')
 
   if (flag('--rock')) {

@@ -1,9 +1,10 @@
 import { useEffect, useRef, type RefObject } from 'react'
 import { play, type SfxName } from '../../engine/audio'
 import { celebrate } from '../../engine/ui/celebrate'
-import { cameraTarget, render, updateFx, type Camera, type Fx, type View } from './draw'
+import { cameraTarget, render, updateFx, type Camera, type Fx } from './draw'
 import { LEVEL } from './level'
 import { newGame, step, type GameEvent, type GameState, type Input } from './logic'
+import { fitView } from './viewport'
 
 export type RunResult = { score: number; coins: number; gems: number; hearts: number; bumps: number }
 
@@ -13,8 +14,6 @@ type Props = {
   onDone: (result: RunResult) => void
 }
 
-const VIEW_H = 540
-const MIN_VIEW_W = 640 // narrow portrait phones zoom out so she can see what's coming
 const END_DELAY = 2.4 // seconds of cake party before the score screen
 
 const SOUND: Partial<Record<GameEvent['type'], SfxName>> = {
@@ -141,8 +140,13 @@ export function Course({ paused, getInput, onDone }: Props) {
         scoreBump = Math.max(0, scoreBump - dt * 5)
       }
 
-      const scale = Math.min(cssH / VIEW_H, cssW / MIN_VIEW_W)
-      const view: View = { w: cssW / scale, h: cssH / scale }
+      // Zero-size canvas (hidden, mid-resize): skip drawing rather than loop on an Infinity view.
+      const fit = fitView(cssW, cssH)
+      if (!fit) {
+        raf = requestAnimationFrame(frame)
+        return
+      }
+      const { scale, view } = fit
       const target = cameraTarget(s, view)
       const cam0 = LEVEL.start.y - view.h * 0.68
       if (!cam) cam = { ...target }

@@ -532,15 +532,15 @@ A left-to-right side-scrolling platformer. The unicorn climbs red sandstone like
 
 **Controls:** arrows or WASD. Up, W or Space jumps (hold for higher); down or S ducks. Touch: ◀ ▶ bottom-left, a big ▲ jump and a ▼ duck bottom-right, with multi-touch so run and jump work together.
 
-**Made for small hands:** coyote time (0.12s) and jump buffering (0.15s), hitboxes smaller than the drawings, no pits (the course only climbs), and rocks are walls rather than hazards. Under an arch she stays ducked even if the down key is let go.
+**Made for small hands:** coyote time (0.12s) and jump buffering (0.15s), hitboxes smaller than the drawings, no pits (the course only climbs), and rocks are walls rather than hazards. Arches never hurt: under one she ducks automatically and stays ducked until she is out, even if she never touches the down key.
 
-**Obstacles:** rocks (solid, jump over: the up+right coordination move), prickly pear cacti, tumbleweeds that roll back and forth (with silly eyes), and low red rock arches to duck under. A double rock with a 90px gap needs one big jump or two hops.
+**Obstacles:** rocks (solid, jump over: the up+right coordination move), prickly pear cacti, tumbleweeds that roll back and forth (with silly eyes), and low red rock arches she ducks under (automatically, never harmful). A double rock with a 90px gap needs one big jump or two hops.
 
 **Power-ups:**
 | Power-up | Where | Effect |
 |---|---|---|
 | Heart | Two in the course | +1 heart, up to 3. She starts with 1. A heart takes a bump so nothing is lost. Each heart left at the summit adds 100 points. |
-| Super speed (rainbow bolt) | Top of the highest floating rock stair | 6s at 1.75x speed with a rainbow trail. She smashes through rocks, cacti, tumbleweeds and arches (+25 each). |
+| Super speed (rainbow bolt) | Top of the highest floating rock stair | 6s at 1.75x speed with a rainbow trail. She smashes through rocks, cacti and tumbleweeds (+25 each). |
 | Wings | Start of section 8 | 10s of super jumps (about 275px), to reach gems no plain jump can. |
 | Magnet | On a floating rock | 10s: nearby coins fly to her. |
 

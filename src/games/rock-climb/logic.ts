@@ -147,7 +147,8 @@ function solids(s: GameState): Rect[] {
 function hazardIndexes(s: GameState): number[] {
   const out: number[] = []
   s.level.obstacles.forEach((o: Obstacle, i) => {
-    if (o.kind !== 'rock' && s.alive[i]) out.push(i)
+    // Arches never hurt: she ducks under them on her own (see tick).
+    if (o.kind !== 'rock' && o.kind !== 'arch' && s.alive[i]) out.push(i)
   })
   return out
 }
@@ -344,9 +345,10 @@ function tick(s: GameState, input: Input, dt: number, events: GameEvent[]): void
   for (const k of ['speed', 'jump', 'magnet'] as const) s.timers[k] = Math.max(0, s.timers[k] - dt)
   p.invuln = Math.max(0, p.invuln - dt)
 
-  // Ducking (stays ducked while an arch is overhead, so she can't stand up into it).
+  // Ducking. An arch overhead ducks her automatically and keeps her ducked until she is out, so a
+  // 4-year-old who forgets the down key just slides under it and is never hurt.
   const wantDuck = input.down && p.onGround
-  p.ducking = wantDuck || (p.ducking && archAbove(s, p))
+  p.ducking = wantDuck || (p.onGround && archAbove(s, p))
   p.h = p.ducking ? PHYS.duckH : PHYS.h
 
   // Run

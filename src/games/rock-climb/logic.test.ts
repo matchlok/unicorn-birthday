@@ -110,10 +110,13 @@ describe('movement', () => {
 describe('arches and ducking', () => {
   const arch: Obstacle = { kind: 'arch', x: 300, y: 400 - ARCH.gap - ARCH.h, w: 200, h: ARCH.h }
 
-  it('standing tall into an arch bumps her', () => {
+  it('walking into an arch without ducking never hurts: she ducks on her own and gets through', () => {
     const s = newGame(field({ obstacles: [arch] }))
-    run(s, R, 2)
-    expect(s.bumps).toBeGreaterThan(0)
+    run(s, R, 4)
+    expect(s.bumps).toBe(0)
+    expect(s.hearts).toBe(newGame(field({ obstacles: [arch] })).hearts)
+    expect(s.p.x).toBeGreaterThan(520)
+    expect(s.p.ducking).toBe(false)
   })
 
   it('ducking slides under, and she stays ducked until she is out', () => {

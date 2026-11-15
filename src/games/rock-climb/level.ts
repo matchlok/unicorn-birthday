@@ -7,7 +7,8 @@ export type Pt = { x: number; y: number }
 export type PowerKind = 'heart' | 'speed' | 'jump' | 'magnet'
 
 // rock: solid boulder to jump over (or stand on). Bumping it just stops her.
-// cactus, tumbleweed, arch: hazards that bump her back. Duck under an arch.
+// cactus, tumbleweed: hazards that bump her back.
+// arch: never hurts. She ducks under it by herself (the down key still works).
 export type ObstacleKind = 'rock' | 'cactus' | 'tumbleweed' | 'arch'
 
 export type Obstacle = Rect & {

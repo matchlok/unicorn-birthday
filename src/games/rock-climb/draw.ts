@@ -902,6 +902,8 @@ export type Frame = {
 }
 
 export function render({ ctx, s, view, cam, cam0, scale, cssW, safeTop, fx, scoreBump }: Frame) {
+  // Belt and braces: the background loops below never end on an Infinity or NaN view.
+  if (!(scale > 0) || !Number.isFinite(view.w) || !Number.isFinite(view.h)) return
   const t = s.t
   const level: Level = s.level
   const camDY = cam.y - cam0
