@@ -16,13 +16,7 @@ export const GAMES: GameEntry[] = [
     status: 'ready',
     component: lazy(() => import('./kart-racing/KartRacing')),
   },
-  {
-    id: 'rock-climb',
-    padColor: 'var(--peach)',
-    icon: 'rocks',
-    status: 'ready',
-    component: lazy(() => import('./rock-climb/RockClimb')),
-  },
+  { id: 'mystery', padColor: 'var(--butter)', icon: 'present', status: 'coming-soon' },
 ]
 
 export function findGame(id: GameEntry['id']): GameEntry | undefined {

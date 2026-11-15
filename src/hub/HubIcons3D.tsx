@@ -73,27 +73,6 @@ export function KartIcon() {
   )
 }
 
-// A tilted red sandstone fin with a little one beside it, and a spinning gold coin.
-export function RocksIcon() {
-  return (
-    <group position={[0, -0.35, 0]}>
-      <RoundedBox args={[0.55, 1.5, 0.5]} radius={0.16} smoothness={3} position={[-0.25, 0.65, 0]} rotation={[0, 0, -0.55]}>
-        <meshToonMaterial color="#D9694F" />
-      </RoundedBox>
-      <RoundedBox args={[0.42, 0.95, 0.42]} radius={0.14} smoothness={3} position={[0.45, 0.4, 0.05]} rotation={[0, 0, -0.5]}>
-        <meshToonMaterial color="#EE8B6A" />
-      </RoundedBox>
-      <RoundedBox args={[1.6, 0.18, 0.7]} radius={0.08} smoothness={3} position={[0, 0, 0]}>
-        <meshToonMaterial color="#F5CC9E" />
-      </RoundedBox>
-      <mesh position={[0.35, 1.35, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.26, 0.26, 0.08, 20]} />
-        <meshToonMaterial color="#FFD84D" />
-      </mesh>
-    </group>
-  )
-}
-
 function Question({ z, flip }: { z: number; flip?: boolean }) {
   return (
     <group position={[0, 0, z]} rotation={[0, flip ? Math.PI : 0, 0]} scale={1.25}>

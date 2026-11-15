@@ -4,7 +4,7 @@ import { useMemo, useRef } from 'react'
 import type * as THREE from 'three'
 import type { GameEntry } from '../games/types'
 import { PAD_RADIUS, boothPosition, padPosition } from './hubLogic'
-import { CardsIcon, KartIcon, PadlockIcon, PresentIcon, RocksIcon, Star } from './HubIcons3D'
+import { CardsIcon, KartIcon, PadlockIcon, PresentIcon, Star } from './HubIcons3D'
 
 // Resolve a `var(--x)` token from the registry to a hex colour three.js can use.
 function cssColor(token: string): string {
@@ -76,17 +76,7 @@ export function GameDisplay({ game, index, count, active, onSelect }: Props) {
           <meshStandardMaterial ref={ring} color="#FFFFFF" emissive={color} emissiveIntensity={0.5} />
         </mesh>
         <group ref={icon} position={[0, 2.15, 0]}>
-          {game.status === 'locked' ? (
-            <PadlockIcon />
-          ) : game.icon === 'cards' ? (
-            <CardsIcon />
-          ) : game.icon === 'kart' ? (
-            <KartIcon />
-          ) : game.icon === 'rocks' ? (
-            <RocksIcon />
-          ) : (
-            <PresentIcon />
-          )}
+          {game.status === 'locked' ? <PadlockIcon /> : game.icon === 'cards' ? <CardsIcon /> : game.icon === 'kart' ? <KartIcon /> : <PresentIcon />}
         </group>
       </group>
 

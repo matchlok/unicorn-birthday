@@ -32,20 +32,6 @@ function Kart() {
   )
 }
 
-// Tilted red rock fins under a sun, with a coin.
-function Rocks() {
-  return (
-    <svg viewBox="0 0 96 96" fill="none">
-      <circle cx="72" cy="22" r="11" fill="var(--butter)" {...STROKE} strokeWidth={3} />
-      <path d="M8 80q14-30 34-52l8 4 14 48z" fill="#D9694F" {...STROKE} />
-      <path d="M46 80q10-20 26-34l6 3 10 31z" fill="#EE8B6A" {...STROKE} />
-      <path d="M22 62l20-22M30 72l18-20" stroke="#FFD5BC" strokeWidth={3} strokeLinecap="round" />
-      <circle cx="30" cy="22" r="10" fill="#FFD84D" {...STROKE} strokeWidth={3} />
-      <path d="M8 80h80" {...STROKE} />
-    </svg>
-  )
-}
-
 function Present() {
   return (
     <svg viewBox="0 0 96 96" fill="none">
@@ -73,6 +59,5 @@ export function Padlock() {
 export function GameIcon({ icon }: { icon: GameEntry['icon'] }) {
   if (icon === 'cards') return <Cards />
   if (icon === 'kart') return <Kart />
-  if (icon === 'rocks') return <Rocks />
   return <Present />
 }

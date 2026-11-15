@@ -12,7 +12,7 @@ This file is the source of truth for building it. A new session should read [../
 
 | Topic | Decision |
 |---|---|
-| Games | Pad 1 Memory Match. Pad 2 Kart Racing. Pad 3 Red Rocks Romp, a side-scrolling platformer (Phase 7, added 2026-11-14). |
+| Games | Pad 1 Memory Match (build now). Pad 2 Kart Racing (Phase 4, locked until then). Pad 3 "coming soon" present. |
 | Characters | The player names the unicorn. No friend characters in the hub for now. Creatures appear only on memory cards. |
 | Audio | Sound effects only. No voice lines. Mute toggle in the corner. |
 | Platform | Desktop web with keyboard and mouse first. As of 2026-11-08, iPhone then iPad are in scope: touch controls and small-screen layouts (Phase 6). |
@@ -26,7 +26,7 @@ These apply to every screen. Check each phase against them before calling it don
 
 1. **No reading needed to play.** Choices are pictures, colors, and stars. Text is only for a grown-up (name entry, small labels).
 2. **Big targets.** Clickable things are at least 88px in both dimensions. The cursor shows a pointer on everything clickable.
-3. **No losing.** No timers, no fail states, no scores shown to the child. Mistakes get a soft sound and reset. *Exception (2026-11-14, Narji's call):* Red Rocks Romp shows points and keeps a high-score table. It still has no fail state: a bump costs a heart or a few coins, never the run.
+3. **No losing.** No timers, no fail states, no scores shown to the child. Mistakes get a soft sound and reset.
 4. **Every action has feedback**, both a sound and a motion (bounce, wobble, sparkle).
 5. **Mashing is safe.** Input locks during animations. Double-clicks and key repeat never break state.
 6. **Always a way home.** A big "back to party" button (house icon) sits top-left in every game.
@@ -524,42 +524,6 @@ Added 2026-11-08. iPhone first (390x844 portrait is the target, 375x667 iPhone S
 
 ---
 
-### Phase 7: Red Rocks Romp (pad 3) (built 2026-11-14, needs an eyes-on pass)
-
-A left-to-right side-scrolling platformer. The unicorn climbs red sandstone like South Valley Park and Red Rocks on Colorado's Front Range, collects coins and power-ups for points, and finishes at a birthday cake on the summit. Then her score goes into a top-5 high-score table.
-
-**Built as:** 2D canvas, not R3F, in `src/games/rock-climb/`. All art is drawn from shapes in `draw.ts`: Colorado sky, two rows of snowy Front Range peaks, tilted red sandstone fins, ponderosa pines, striped red rock ground and floating rocks. Each background layer scrolls at its own speed.
-
-**Controls:** arrows or WASD. Up, W or Space jumps (hold for higher); down or S ducks. Touch: ◀ ▶ bottom-left, a big ▲ jump and a ▼ duck bottom-right, with multi-touch so run and jump work together.
-
-**Made for small hands:** coyote time (0.12s) and jump buffering (0.15s), hitboxes smaller than the drawings, no pits (the course only climbs), and rocks are walls rather than hazards. Under an arch she stays ducked even if the down key is let go.
-
-**Obstacles:** rocks (solid, jump over: the up+right coordination move), prickly pear cacti, tumbleweeds that roll back and forth (with silly eyes), and low red rock arches to duck under. A double rock with a 90px gap needs one big jump or two hops.
-
-**Power-ups:**
-| Power-up | Where | Effect |
-|---|---|---|
-| Heart | Two in the course | +1 heart, up to 3. She starts with 1. A heart takes a bump so nothing is lost. Each heart left at the summit adds 100 points. |
-| Super speed (rainbow bolt) | Top of the highest floating rock stair | 6s at 1.75x speed with a rainbow trail. She smashes through rocks, cacti, tumbleweeds and arches (+25 each). |
-| Wings | Start of section 8 | 10s of super jumps (about 275px), to reach gems no plain jump can. |
-| Magnet | On a floating rock | 10s: nearby coins fly to her. |
-
-**Points:** coin 10, gem 100, power-up 50, smash 25, summit 500, plus 100 per heart left. A bump without a heart pops up to 3 coins out (minus 10 each); she can grab them back for 5 seconds. Score never goes below 0. No lives, no game over, no timer.
-
-**High scores:** top 5 in `localStorage` (`ubb:rockClimbScores`), saved under the unicorn's name. The end screen shows the score counting up, coins/gems/hearts, a "New best!" or "High score!" badge, and the table with her row highlighted.
-
-**Tests (28):** jump heights, rock walls, step-up lips, one-way floating rocks, coyote and buffer, ducking under arches, every pickup and power-up, hearts absorbing bumps, coin drops and pickups, tumbleweed patrol, level checks (every ledge and floating rock reachable), high-score insert and ranking, and a scripted player that climbs the whole course to the cake.
-
-- [x] Logic, level, high scores, tests
-- [x] Canvas renderer, unicorn drawing, effects, HUD
-- [x] Keyboard and touch input, hint pictures, confirm-leave, end screen
-- [x] Registry entry on pad 3 (peach), 2D and 3D rock icons for the hub
-- [x] New synthesized sounds: coin, jump, gem, power, heart, smash
-- [ ] Eyes-on pass in a real browser: feel of the jump, camera, sounds, 3D pad icon in the hub
-- [ ] Touch buttons on a real phone (landscape is best; portrait works but she is small)
-- [ ] Kid test: can a 4-year-old reach the cake? Tune `PHYS` and obstacle spacing in `level.ts` from what we see
-- Later ideas: a "turn sideways" picture on portrait phones, more levels (Garden of the Gods, Roxborough), a grown-up name entry for each high score, a second difficulty with more tumbleweeds
-
 ## 8. Testing approach
 
 - **Unit (Vitest):** all pure logic, meaning Memory Match `logic.ts`, `persist.ts` (including a throwing `localStorage`), and later the kart lap and checkpoint logic.
@@ -576,4 +540,4 @@ _(Add dated notes here after each play session.)_
 - Recorded voice lines.
 - Friend characters (witch, dragon, and others) at the party.
 - More creatures and themed card decks.
-- More mini-games for new pads. Candidates: balloon pop, cake decorating, pin the horn on the unicorn.
+- The third game (pad 3). Candidates: balloon pop, cake decorating, pin the horn on the unicorn.
