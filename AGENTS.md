@@ -19,7 +19,7 @@ A web game for a 4-year-old. A unicorn's birthday party hub with landing pads th
 Update when a phase finishes or a decision changes.
 
 - **Phase:** Phases 0, 1, 2 (Memory Match, 5 difficulties), Kart Racing v1, Phase 6a/6b/6c (iPhone groundwork, portrait Memory Match, kart touch pedals) and Phase 3 (3D party hub with a display per game) are built. Little has been checked on a real device. The real test is a 4-year-old finishing Easy.
-- **Open investigation:** Chrome freezes with runaway memory after entering the unicorn's name on the local dev server. Start from [docs/investigations/2026-11-14-chrome-freeze/README.md](docs/investigations/2026-11-14-chrome-freeze/README.md). Red Rocks Romp (Phase 7) is parked on branch `rock-climb` until this is solved.
+- **Open investigation:** Chrome freeze after entering the unicorn's name. Cause found and fixed on branch `investigate-chrome-freeze` (zero-length looping keep-alive WAV in `audio.ts`); needs Narji's check in real Chrome. See [docs/investigations/2026-11-14-chrome-freeze/README.md](docs/investigations/2026-11-14-chrome-freeze/README.md). Red Rocks Romp (Phase 7) stays parked on branch `rock-climb` until the fix is confirmed and the zero-size canvas guard is added.
 - **Next action:** Phase 6d/6e (hub touch polish, iPad), a real-device pass of the 3D hub, then the third game for pad 3 (see [docs/PLAN.md](docs/PLAN.md)).
 
 Details per phase, what is unchecked, and decisions: [docs/STATUS.md](docs/STATUS.md). Add new entries there; keep only the phase and next action here.

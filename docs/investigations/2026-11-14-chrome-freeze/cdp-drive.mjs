@@ -68,11 +68,28 @@ async function metrics() {
   return `heap ${(get('JSHeapUsedSize') / 1048576).toFixed(1)} MB  nodes ${get('Nodes')}  listeners ${get('JSEventListeners')}`
 }
 
+// When the main thread is stuck in JavaScript, Debugger.pause interrupts it and reports where.
+// If nothing comes back, the stall is not in JS (media pipeline, GPU wait, ...).
+let pausedOnce = false
+let onPaused = null
+async function captureStack() {
+  log('  main thread stuck: asking the debugger where')
+  page.send(JSON.stringify({ id: ++nextId, method: 'Debugger.enable' }))
+  const got = new Promise((r) => { onPaused = r })
+  page.send(JSON.stringify({ id: ++nextId, method: 'Debugger.pause' }))
+  const frames = await Promise.race([got, sleep(10000).then(() => null)])
+  if (!frames) { log('  NO pause event in 10 s: the stall is not in page JavaScript'); return }
+  for (const f of frames.slice(0, 12)) log(`    at ${f.functionName || '(anonymous)'}  ${f.url.split('/').slice(-2).join('/')}:${f.location.lineNumber + 1}:${f.location.columnNumber + 1}`)
+}
+
 async function sample(label) {
   log(label)
   const steps = Math.max(1, Math.round(seconds / 5))
   for (let k = 0; k <= steps; k++) {
-    try { log(`  t+${k * 5}s  ${await metrics()}`) } catch (e) { log(`  t+${k * 5}s  ${e.message}`) }
+    try { log(`  t+${k * 5}s  ${await metrics()}`) } catch (e) {
+      log(`  t+${k * 5}s  ${e.message}`)
+      if (flag('--pause') && !pausedOnce) { pausedOnce = true; await captureStack() }
+    }
     if (k < steps) await sleep(5000)
   }
 }
@@ -81,12 +98,18 @@ try {
   await connect()
   page.addEventListener('message', (ev) => {
     const m = JSON.parse(ev.data)
+    if (m.method === 'Debugger.paused' && onPaused) onPaused(m.params.callFrames)
     if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id) }
     if (m.method === 'Runtime.exceptionThrown') log('EXCEPTION', m.params.exceptionDetails.exception?.description ?? m.params.exceptionDetails.text)
     if (m.method === 'Runtime.consoleAPICalled' && ['error', 'warning'].includes(m.params.type)) log(`console.${m.params.type}`, m.params.args.map((a) => a.value ?? a.description).join(' '))
     if (m.method === 'Network.responseReceived' && m.params.response.status >= 400) log('HTTP', m.params.response.status, m.params.response.url)
   })
   await send('Runtime.enable'); await send('Performance.enable'); await send('Network.enable'); await send('Page.enable')
+  // Split the audio suspects: --no-keepalive stubs <audio>.play(); --no-webaudio hides AudioContext.
+  const stubs = []
+  if (flag('--no-keepalive')) stubs.push(`HTMLMediaElement.prototype.play = () => Promise.resolve()`)
+  if (flag('--no-webaudio')) stubs.push(`delete window.AudioContext; delete window.webkitAudioContext`)
+  if (stubs.length) await send('Page.addScriptToEvaluateOnNewDocument', { source: stubs.join(';') })
   log('open', url, flag('--audio') ? '(audio on)' : '(audio blocked)', flag('--gpu') ? '(gpu)' : '(software gl)')
   await send('Page.navigate', { url })
   await sleep(3000)

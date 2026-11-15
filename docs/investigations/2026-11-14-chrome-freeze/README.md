@@ -1,6 +1,25 @@
 # Investigation: Chrome freezes after entering the unicorn's name
 
-Opened 2026-11-14. Status: **open, not reproduced outside Narji's Chrome.**
+Opened 2026-11-14. Status: **root cause found and fixed on branch `investigate-chrome-freeze`; waiting for Narji to confirm in real Chrome.**
+
+## Result (2026-11-14, later session)
+
+Reproduced headless with `cdp-drive.mjs --audio` against `vite build` + `vite preview` (a separate port, no shared Vite cache): on the hub, `Performance.getMetrics` timed out for 10 to 20 s at a time while the JS heap stayed flat (9 to 12 MB). Without `--audio` every sample returned in time. `Debugger.pause` got no event, so the stall is not in page JavaScript.
+
+| Run | Result |
+|---|---|
+| no audio | fine |
+| `--audio` (software GL) | stalls, 3 of 3 runs (one recovered after ~20 s) |
+| `--audio --gpu` | stalls |
+| `--audio --no-webaudio` (keep-alive clip only) | **stalls** |
+| `--audio --no-keepalive` (Web Audio only) | fine |
+| `--audio` after the fix, 2 runs | fine |
+
+Cause: the silent keep-alive clip in `playMediaChannelClip` was a WAV with a 0-byte data chunk set to `loop = true`. Chrome restarts a zero-length looping element in a tight loop inside its media pipeline, which starves the browser. It only runs once audio is allowed, which is why it never showed up in headless tests and why it hit Narji's Chrome on every load (media engagement lets localhost autoplay).
+
+Fix: `src/engine/silentWav.ts` builds a 0.5 s silent WAV with a real data chunk (unit-tested in `silentWav.test.ts`). Still to do: Narji confirms in real Chrome, and the unrelated suspects below (3D hub on a real GPU, Red Rocks zero-size canvas guard) stay worth checking before merging `rock-climb`. Side effect to know: starting a second Vite server with `--force` rewrote `node_modules/.vite/deps` under Narji's running server on 5173; restart that server once.
+
+## Original brief (kept for history)
 
 ## Symptom
 

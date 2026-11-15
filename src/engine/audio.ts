@@ -1,5 +1,7 @@
 // All sound is synthesized with the Web Audio API: no audio files, no network, no licences.
 
+import { silentWavUrl } from './silentWav'
+
 export type SfxName =
   | 'click'
   | 'flip'
@@ -224,9 +226,7 @@ function playMediaChannelClip(): void {
     if (keepAlive.paused) void keepAlive.play().catch(() => {})
     return
   }
-  const wav =
-    'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA='
-  keepAlive = new Audio(wav)
+  keepAlive = new Audio(silentWavUrl())
   keepAlive.loop = true
   keepAlive.volume = 0.01
   void keepAlive.play().catch(() => {})
