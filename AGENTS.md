@@ -4,7 +4,7 @@ PARA bucket: **Project**. Workspace rules: [../../AGENTS.md](../../AGENTS.md). T
 
 ## What this is
 
-A web game for a 4-year-old. A unicorn's birthday party hub with landing pads that launch party games: Memory Match first, then Unicorn Kart Racing, then a third game to be picked. Local first, then Vercel and a link from narjitaujla.com. Full plan: [docs/PLAN.md](docs/PLAN.md).
+A web game for a 4-year-old. A unicorn's birthday party hub with landing pads that launch party games: Memory Match, Unicorn Kart Racing, and Red Rocks Romp (a side-scrolling platformer). Local first, then Vercel and a link from narjitaujla.com. Full plan: [docs/PLAN.md](docs/PLAN.md).
 
 ## Rules
 
@@ -18,9 +18,9 @@ A web game for a 4-year-old. A unicorn's birthday party hub with landing pads th
 
 Update when a phase finishes or a decision changes.
 
-- **Phase:** Phases 0, 1, 2 (Memory Match, 5 difficulties), Kart Racing v1, Phase 6a/6b/6c (iPhone groundwork, portrait Memory Match, kart touch pedals) and Phase 3 (3D party hub with a display per game) are built. Little has been checked on a real device. The real test is a 4-year-old finishing Easy.
-- **Open investigation:** Chrome freeze after entering the unicorn's name. Cause found and fixed on branch `investigate-chrome-freeze` (zero-length looping keep-alive WAV in `audio.ts`); needs Narji's check in real Chrome. See [docs/investigations/2026-11-14-chrome-freeze/README.md](docs/investigations/2026-11-14-chrome-freeze/README.md). Red Rocks Romp (Phase 7) stays parked on branch `rock-climb` until the fix is confirmed and the zero-size canvas guard is added.
-- **Next action:** Phase 6d/6e (hub touch polish, iPad), a real-device pass of the 3D hub, then the third game for pad 3 (see [docs/PLAN.md](docs/PLAN.md)).
+- **Phase:** Phases 0, 1, 2 (Memory Match, 5 difficulties), Kart Racing v1, Phase 6a/6b/6c (iPhone groundwork, portrait Memory Match, kart touch pedals), Phase 3 (3D party hub with a display per game) and Phase 7 (Red Rocks Romp platformer on pad 3) are built. Little has been checked on a real device. The real test is a 4-year-old finishing Easy.
+- **Recent investigation:** the Chrome freeze after entering the unicorn's name was a zero-length looping keep-alive WAV in `audio.ts`. Fixed and Red Rocks merged back with a zero-size canvas guard; Narji still to confirm in real Chrome. See [docs/investigations/2026-11-14-chrome-freeze/README.md](docs/investigations/2026-11-14-chrome-freeze/README.md).
+- **Next action:** play Red Rocks Romp by hand and tune the jump and obstacle spacing (PLAN Phase 7), then Phase 6d/6e (hub touch polish, iPad) and a real-device pass of the 3D hub.
 
 Details per phase, what is unchecked, and decisions: [docs/STATUS.md](docs/STATUS.md). Add new entries there; keep only the phase and next action here.
 
@@ -37,5 +37,5 @@ Vite + React + TypeScript, React Three Fiber + drei, Zustand, Framer Motion (`mo
 ## Commands
 
 - `npm run dev`, then open http://localhost:5173/unicorn/
-- `npx vitest run`
+- `npx vitest run` (from PowerShell: under Git Bash every suite fails with "reading 'config'")
 - `npm run build`

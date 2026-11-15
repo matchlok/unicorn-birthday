@@ -16,6 +16,12 @@ export type SfxName =
   | 'pop'
   | 'honk'
   | 'bump'
+  | 'coin'
+  | 'jump'
+  | 'gem'
+  | 'power'
+  | 'heart'
+  | 'smash'
 
 type Wave = OscillatorType
 
@@ -124,6 +130,28 @@ const SFX: Record<SfxName, (bus: GainNode, t: number) => void> = {
   // Soft thud when the kart brushes a fence.
   bump: (bus, t) => note(bus, { freq: 160, slideTo: 90, at: t, dur: 0.14, wave: 'sine', gain: 0.7 }),
   locked: (bus, t) => note(bus, { freq: 180, slideTo: 140, at: t, dur: 0.18, wave: 'triangle', gain: 0.5 }),
+  // Classic two-note coin "bling".
+  coin: (bus, t) => {
+    note(bus, { freq: midi(83), at: t, dur: 0.08, wave: 'square', gain: 0.18 })
+    note(bus, { freq: midi(88), at: t + 0.07, dur: 0.22, wave: 'square', gain: 0.18 })
+  },
+  // Springy "boing" upward.
+  jump: (bus, t) => note(bus, { freq: 300, slideTo: 720, at: t, dur: 0.16, wave: 'triangle', gain: 0.45 }),
+  // Sparkly run for a gem.
+  gem: (bus, t) => [84, 88, 91, 96].forEach((n, i) => chime(bus, midi(n), t + i * 0.06, 0.5, 0.7)),
+  // Rising power-up fanfare.
+  power: (bus, t) =>
+    [60, 64, 67, 72, 76, 79, 84].forEach((n, i) => note(bus, { freq: midi(n), at: t + i * 0.05, dur: 0.18, wave: 'triangle', gain: 0.5 })),
+  // Warm heart: two soft bells, like a heartbeat.
+  heart: (bus, t) => {
+    chime(bus, midi(76), t, 0.4, 0.8)
+    chime(bus, midi(81), t + 0.16, 0.6, 0.8)
+  },
+  // Crunchy smash with a happy bell on top.
+  smash: (bus, t) => {
+    note(bus, { freq: 220, slideTo: 60, at: t, dur: 0.18, wave: 'sawtooth', gain: 0.25 })
+    chime(bus, midi(91), t + 0.05, 0.3, 0.5)
+  },
 }
 
 export function play(name: SfxName): void {
