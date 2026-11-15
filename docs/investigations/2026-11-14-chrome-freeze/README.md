@@ -6,6 +6,8 @@ Opened 2026-11-14. Status: **open, not reproduced outside Narji's Chrome.**
 
 In desktop Chrome on the local dev server (`npm run dev`, http://localhost:5173/unicorn/), the game shows the ⭐ loading placeholder and then the whole browser locks up. The address bar, refresh and DevTools all stop responding, and Chrome has to be shut down. Narji first saw it right after submitting the unicorn's name, then again when opening the Red Rocks game. A normal reload did not clear it.
 
+Narji also reports that after every Chrome restart the game opens straight on the island (the name is saved, so the name screen is skipped) **with the music already playing**. Chrome is letting this localhost page play audio without a click (its media-engagement autoplay allowance), so the audio code runs right away on every visit.
+
 Chrome processes on the machine grew to 1.5 to 3 GB each. One process from a freshly restarted Chrome grew **527 MB in 10 seconds** (18:50, measured with `Get-Process`).
 
 ## What makes this hard
@@ -41,7 +43,7 @@ Headless Chrome differs from Narji's in two ways that matter:
 
 ## Suspects, most likely first
 
-1. **Audio.** Music starts on the first click, which is the name submit, and it never ran in any headless test. Look at `startMusic` / `scheduleMusic` (a `setInterval` that creates oscillators against `ctx.currentTime`), the echo feedback loop (delay plus 0.32 feedback gain), and the looping silent `<audio>` keep-alive in `playMediaChannelClip`. Quick test: mute (top-right button) **before** entering the name. If the freeze goes away, this is it.
+1. **Audio, most likely the silent keep-alive clip.** In Narji's Chrome the music plays on load (see Symptom); it never ran in any headless test. Prime lead: `playMediaChannelClip` in `src/engine/audio.ts` creates `new Audio(wav)` with `loop = true`, and the inline WAV (`data:audio/wav;base64,UklGRiQAAABXQVZF...ZGF0YQAAAAA=`) has a **0-byte data chunk**, so the clip has no duration. A looping zero-length media element can make the browser restart playback in a tight loop inside its media pipeline, which would grow memory outside the page's JS heap (matching a renderer heap that looked flat in tests) and starve the browser. First experiment: give the clip real length (for example 0.5 s of silence at 8 kHz) or stop looping it, and see whether the freeze stops. Also look at `startMusic` / `scheduleMusic` (a `setInterval` that creates oscillators against `ctx.currentTime`), the echo feedback loop (delay plus 0.32 feedback gain), and the looping silent `<audio>` keep-alive in `playMediaChannelClip`. Quick test: mute (top-right button) **before** entering the name. If the freeze goes away, this is it.
 2. **The 3D hub on a real GPU.** It was built 2026-11-08 and only ever checked in headless Chromium with software GL (see docs/STATUS.md). It mounts right after the name screen. Check for per-frame allocations, geometry or material created in render, `<Sparkles>`, and `BirthdayBanner` projecting a point every frame.
 3. **Dev-server state.** Two or more Vite servers sharing `node_modules/.vite/deps`, plus a browser cache of optimized deps that a normal reload does not refresh. Rule out with one server, `npm run dev -- --force`, and Ctrl+Shift+R, or compare against `npm run build && npx vite preview`.
 4. **Red Rocks zero-size canvas** (only on branch `rock-climb`). If the canvas ever measures 0 wide or tall, `scale` is 0, the view size becomes Infinity or NaN, and the loops in `draw.ts` (`peaks`, `fins`, `trees`, `strata`) never end while pushing into arrays. That would explain runaway memory in the game, but not on `main`. Guard before merging the branch: skip the frame when `cssW < 1 || cssH < 1`, and bail out of the drawing loops when the view size is not finite.
@@ -53,7 +55,8 @@ Work on a branch (`git switch -c investigate-chrome-freeze`), not `main`.
 1. **Clean start.** No leftover Chrome processes in Windows Task Manager, exactly one Vite server, started with `npm run dev -- --force`.
 2. **Watch it happen.** Fresh Chrome window, open DevTools (F12) **before** entering the name. Turn on the Performance monitor (Ctrl+Shift+P, "Show Performance monitor") for JS heap, DOM nodes and event listeners, and keep Chrome's Task Manager (Shift+Esc) open. Record which row grows (the tab, or the GPU process) and the last console messages before the freeze.
 3. **Split the suspects**, one change at a time:
-   - Mute first, then enter the name (tests suspect 1).
+   - In DevTools Console run `document.querySelectorAll('audio').length` and check `chrome://media-internals` for a player that keeps restarting (tests the keep-alive clip).
+   - Mute first, then enter the name (tests suspect 1). Note the keep-alive clip still plays while muted, since `unlockAudio` calls it regardless; to rule it out, comment out `playMediaChannelClip()` in `unlockAudio`.
    - With a name already saved, the app starts on the hub without a click. Open the page and don't click anything (tests suspect 2 without audio).
    - Same steps against `vite preview` (tests suspect 3).
    - In Chrome, `chrome://settings/system`: turn off "Use graphics acceleration" and retry (tests the GPU half of suspect 2).
