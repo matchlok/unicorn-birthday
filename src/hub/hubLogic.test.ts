@@ -110,6 +110,17 @@ describe('walking', () => {
     expect(activePad(s, 3, null)).toBe(0)
   })
 
+  it('leaves a roomy walkway round the cake so pad 3 (behind it) is easy to reach', () => {
+    // Pad 3 sits behind the cake from spawn, so she has to walk round it. A present parked
+    // next to the cake used to leave a gap narrower than she is.
+    const roomy = 2 * PLAYER_RADIUS + 0.6
+    for (const o of obstacles(3)) {
+      if (o === CAKE) continue
+      const gap = Math.hypot(o.x - CAKE.x, o.z - CAKE.z) - CAKE.r - o.r
+      expect(gap, `obstacle at (${o.x.toFixed(1)}, ${o.z.toFixed(1)})`).toBeGreaterThanOrEqual(roomy)
+    }
+  })
+
   it('wishToward is null on arrival and eases near the target', () => {
     expect(wishToward({ x: 1, z: 1 }, { x: 1.05, z: 1 })).toBeNull()
     const near = wishToward({ x: 0, z: 0 }, { x: 0.5, z: 0 })!

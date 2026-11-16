@@ -24,8 +24,8 @@ export const CAKE: Circle = { x: 0, z: 0, r: 2.2 }
 
 // Presents are decoration and obstacles. `size` is the box edge; the collision circle is a bit larger.
 export const PRESENTS = [
-  { x: -3.8, z: -1.8, size: 1.2 },
-  { x: 4.2, z: -2.0, size: 1.0 },
+  { x: -8.0, z: -4.0, size: 1.2 }, // kept out wide so the walk around the cake to pad 3 stays clear
+  { x: 7.6, z: -5.4, size: 1.0 },
   { x: -2.6, z: 5.2, size: 1.0 },
   { x: 2.9, z: 5.7, size: 1.3 },
   { x: 8.8, z: -1.0, size: 1.1 },
