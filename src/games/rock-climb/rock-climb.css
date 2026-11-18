@@ -128,6 +128,19 @@
   .rock-btn--down { width: 72px; height: 72px; }
 }
 
+/* Narrow portrait phones: four buttons in one row don't fit (the duck button covered
+   the right arrow on a 390px iPhone). Stack duck above jump and scale with width. */
+@media (max-width: 600px) and (orientation: portrait) {
+  .rock-btn { width: min(100px, 24vw); height: min(100px, 24vw); }
+  .rock-btn--jump { width: min(128px, 30vw); height: min(128px, 30vw); }
+  .rock-btn--down { width: min(84px, 20vw); height: min(84px, 20vw); }
+  .rock-btns__side--right {
+    flex-direction: column;
+    align-items: center;
+  }
+  .rock-hint--touch { bottom: calc(260px + var(--safe-bottom)); }
+}
+
 /* End screen */
 .rock-end {
   position: absolute;
