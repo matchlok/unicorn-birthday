@@ -439,8 +439,8 @@ Built without Rapier: arcade kinematics in `logic.ts` fit the "walls only slow y
 ### Phase 5: Ship at narjitaujla.com/unicorn
 
 **Game project (this repo):**
-- [ ] `vite.config.ts` already has `base: '/unicorn/'`. The build outputs to `dist/`, with assets referenced as `/unicorn/assets/...`.
-- [ ] Vite puts `dist/index.html` at the root, but the files must be served under `/unicorn/`. Simplest: set `build.outDir: 'dist/unicorn'` and add a `vercel.json`:
+- [x] `vite.config.ts` already has `base: '/unicorn/'`. The build outputs to `dist/`, with assets referenced as `/unicorn/assets/...`.
+- [x] Vite puts `dist/index.html` at the root, but the files must be served under `/unicorn/`. Simplest: set `build.outDir: 'dist/unicorn'` and add a `vercel.json`:
   ```json
   {
     "outputDirectory": "dist",
@@ -448,11 +448,11 @@ Built without Rapier: arcade kinematics in `logic.ts` fit the "walls only slow y
   }
   ```
   (The app has no client routes yet, so the rewrite only matters if routes are added later.)
-- [ ] Push the repo to GitHub (private is fine), import it into Vercel as a new project with framework "Vite". Note the deployment URL, such as `unicorn-birthday-bash.vercel.app`. **Ask before creating the GitHub repo or Vercel project.**
-- [ ] Check `https://unicorn-birthday-bash.vercel.app/unicorn/` works on its own.
+- [ ] **Needs Narjit (GitHub and Vercel accounts).** Push the repo to GitHub (private is fine), import it into Vercel as a new project with framework "Vite". Note the deployment URL, such as `unicorn-birthday-bash.vercel.app`. **Ask before creating the GitHub repo or Vercel project.**
+- [ ] **Needs Narjit (after the deploy).** Check `https://unicorn-birthday-bash.vercel.app/unicorn/` works on its own.
 
 **Portfolio project (`narjit-aujla-portfolio`, Next.js 15):** a separate task in that project, done from a session started there.
-- [ ] Add a rewrite to `next.config.ts`:
+- [ ] **Needs Narjit (portfolio project).** Add a rewrite to `next.config.ts`:
   ```ts
   const nextConfig: NextConfig = {
     async rewrites() {
@@ -463,15 +463,15 @@ Built without Rapier: arcade kinematics in `logic.ts` fit the "walls only slow y
     },
   };
   ```
-- [ ] Add a project card on the portfolio linking to `/unicorn`.
-- [ ] Check `narjitaujla.com/unicorn` loads, sounds play, and a reload keeps the unicorn's name.
+- [ ] **Needs Narjit (portfolio project).** Add a project card on the portfolio linking to `/unicorn`.
+- [ ] **Needs Narjit (after the deploy).** Check `narjitaujla.com/unicorn` loads, sounds play, and a reload keeps the unicorn's name.
 
 **Pre-ship checks:**
-- [ ] Latest Chrome, Safari, and Firefox on the laptop. Quick check on an iPad, where only clicking or tapping needs to work for now.
-- [ ] Total download under 5 MB, Lighthouse performance over 80 on desktop.
-- [ ] Favicon (unicorn head SVG), page title, and an Open Graph image (screenshot of the hub) for the portfolio link preview.
-- [ ] `CREDITS.md` complete. A small "credits" link on the hub (for grown-ups) shows it.
-- [ ] Short portfolio write-up: what it is, the stack, and one or two things learned.
+- [ ] **Needs Narjit (real browsers and iPad).** Latest Chrome, Safari, and Firefox on the laptop. Quick check on an iPad, where only clicking or tapping needs to work for now.
+- [x] Total download under 5 MB (dist is 1.59 MiB, UNI-12). [ ] **Needs Narjit:** Lighthouse performance over 80 on desktop.
+- [x] Favicon (unicorn head SVG), page title, description, apple-touch-icon and an Open Graph image (`public/og-image.png`, screenshot of the hub) for the portfolio link preview (UNI-12). The og:image URL assumes narjitaujla.com/unicorn.
+- [x] `CREDITS.md` complete. A small "credits" link on the hub (for grown-ups) shows it.
+- [ ] **Needs Narjit (portfolio project).** Short portfolio write-up: what it is, the stack, and one or two things learned.
 
 ### Phase 6: iPhone and iPad (touch and small screens)
 
