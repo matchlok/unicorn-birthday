@@ -27,7 +27,8 @@ export const GAMES: GameEntry[] = [
     id: 'train',
     padColor: 'var(--sky)',
     icon: 'train',
-    status: 'coming-soon',
+    status: 'ready',
+    component: lazy(() => import('./train/TrainMaze')),
   },
 ]
 

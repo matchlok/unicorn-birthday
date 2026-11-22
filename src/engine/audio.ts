@@ -22,6 +22,9 @@ export type SfxName =
   | 'power'
   | 'heart'
   | 'smash'
+  | 'whistle'
+  | 'chug'
+  | 'clack'
 
 type Wave = OscillatorType
 
@@ -152,6 +155,22 @@ const SFX: Record<SfxName, (bus: GainNode, t: number) => void> = {
     note(bus, { freq: 220, slideTo: 60, at: t, dur: 0.18, wave: 'sawtooth', gain: 0.25 })
     chime(bus, midi(91), t + 0.05, 0.3, 0.5)
   },
+  // Toy steam whistle: a rising "too" then a held "ooot", with a quiet fifth above.
+  whistle: (bus, t) => {
+    note(bus, { freq: midi(79), slideTo: midi(83), at: t, dur: 0.22, wave: 'triangle', gain: 0.6 })
+    note(bus, { freq: midi(83), at: t + 0.2, dur: 0.5, wave: 'triangle', gain: 0.6 })
+    note(bus, { freq: midi(90), at: t + 0.2, dur: 0.5, wave: 'sine', gain: 0.15 })
+  },
+  // One soft engine beat. startChug() repeats it; there is no looping buffer.
+  chug: (bus, t) => {
+    note(bus, { freq: 130, slideTo: 70, at: t, dur: 0.1, wave: 'triangle', gain: 0.55 })
+    note(bus, { freq: 900, slideTo: 500, at: t, dur: 0.05, wave: 'sine', gain: 0.08 })
+  },
+  // Wooden "clack" of a switch lever.
+  clack: (bus, t) => {
+    note(bus, { freq: 240, slideTo: 110, at: t, dur: 0.06, wave: 'square', gain: 0.22 })
+    note(bus, { freq: 1300, slideTo: 800, at: t + 0.03, dur: 0.04, wave: 'triangle', gain: 0.3 })
+  },
 }
 
 export function play(name: SfxName): void {
@@ -164,6 +183,22 @@ export function play(name: SfxName): void {
   } catch {
     // no sound is better than a crash
   }
+}
+
+// The train's chugging: one short synthesized beat on a timer. Always pair startChug with
+// stopChug (the train game does it on unmount). Never a looping zero-length buffer: that froze Chrome.
+export const CHUG_MS = 260
+let chugTimer: ReturnType<typeof setInterval> | null = null
+
+export function startChug(): void {
+  if (chugTimer) return
+  play('chug')
+  chugTimer = setInterval(() => play('chug'), CHUG_MS)
+}
+
+export function stopChug(): void {
+  if (chugTimer) clearInterval(chugTimer)
+  chugTimer = null
 }
 
 // Calm music box lullaby: C - Am - F - G, a gently rocking arpeggio with a sparse

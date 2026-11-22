@@ -6,14 +6,20 @@ import { BigButton } from '../../engine/ui/BigButton'
 import { celebrateBig } from '../../engine/ui/celebrate'
 import { findCreature } from './creatures'
 
-type Props = { onReplay: () => void; onChangeDifficulty: () => void; onHome: () => void }
+type Props = {
+  onReplay: () => void
+  onChangeDifficulty: () => void
+  onHome: () => void
+  /** Which game's sticker she earns. Memory Match unless another game reuses this screen. */
+  stickerId?: string
+}
 
 const LETTER_COLORS = ['var(--pink-deep)', 'var(--lavender)', 'var(--sky)', 'var(--butter)', 'var(--mint)', 'var(--peach)']
 const FLOATERS = ['⭐', '✨', '💖', '🌈', '⭐', '✨', '💖', '🌈', '⭐', '✨']
 
 const STAR_PATH = 'M24 4l6 13 14 2-10 10 3 14-13-7-13 7 3-14L4 19l14-2z'
 
-export function WinScreen({ onReplay, onChangeDifficulty, onHome }: Props) {
+export function WinScreen({ onReplay, onChangeDifficulty, onHome, stickerId = 'memory-match' }: Props) {
   const name = useStore((s) => s.unicornName)
   const addSticker = useStore((s) => s.addSticker)
   const done = useRef(false)
@@ -24,8 +30,8 @@ export function WinScreen({ onReplay, onChangeDifficulty, onHome }: Props) {
     if (done.current) return // StrictMode runs effects twice in dev
     done.current = true
     play('win')
-    addSticker('memory-match')
-  }, [addSticker])
+    addSticker(stickerId)
+  }, [addSticker, stickerId])
 
   useEffect(() => celebrateBig(), [])
 
