@@ -5,6 +5,7 @@ import { readJson, writeJson } from '../engine/persist'
 import { useStore } from '../engine/store'
 import { GAMES } from '../games/registry'
 import { BirthdayBanner } from './BirthdayBanner'
+import { CreditsLink } from './CreditsLink'
 import { spawnBesidePad } from './hubLogic'
 import { PadPrompt } from './PadPrompt'
 import './hub.css'
@@ -83,6 +84,8 @@ export function PartyHub() {
       )}
 
       <PadPrompt game={game} onPlay={playGame} />
+
+      <CreditsLink />
 
       {hint && !game && (
         <div className="hub-hint" role="note">
