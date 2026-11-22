@@ -1,0 +1,158 @@
+.tr {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--sky), var(--mint));
+}
+
+/* Picker */
+.tr-picker {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tr-picker__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 230px;
+  min-height: 260px;
+  padding: 28px 16px;
+  border: var(--outline);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.tr-picker__track {
+  display: grid;
+  place-items: center;
+  padding: 8px;
+}
+
+.tr-picker__track svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Play: the board is centred in whatever the corner buttons and the Go button leave free. */
+.tr-play {
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.tr-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Header row above the board: the Go button at the board's top left, with the title beside it. */
+.tr-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.tr-title {
+  margin: 0;
+  color: var(--grape);
+  font-size: clamp(28px, 5vh, 44px);
+  line-height: 1;
+  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.6);
+}
+
+.tr-stage {
+  position: relative;
+}
+
+.tr-svg {
+  display: block;
+  overflow: visible;
+}
+
+.tr-svg--top {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+.tr-switch {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tr-switch:focus-visible {
+  box-shadow: 0 0 0 6px var(--butter), 0 0 0 9px var(--grape);
+}
+
+.tr-go {
+  flex: none;
+  width: var(--go);
+  height: var(--go);
+  padding: 0;
+  border: var(--outline);
+  border-radius: 50%;
+  background: var(--butter);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+}
+
+.tr-go svg {
+  width: 70%;
+  height: 70%;
+}
+
+.tr-go:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.tr-go--ready {
+  animation: tr-pulse 1.3s ease-in-out infinite;
+}
+
+@keyframes tr-pulse {
+  0%, 100% { scale: 1; }
+  50% { scale: 1.08; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tr-go--ready { animation: none; }
+}
+
+/* Phones: the picker cards shrink to fit three across (landscape) or stack (portrait). */
+@media (max-width: 600px), (max-height: 500px) {
+  .tr-picker { gap: 12px; }
+  .tr-picker__card { width: 150px; min-height: 0; gap: 12px; padding: 16px 8px; }
+  .tr-picker__card svg { max-width: 100%; }
+  .tr-picker__track { padding: 4px; }
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+  .tr-picker {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin-top: calc(var(--corner) + var(--edge));
+  }
+  .tr-picker__card { flex-direction: row; justify-content: center; width: min(320px, 90vw); }
+}

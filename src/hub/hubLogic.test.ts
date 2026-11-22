@@ -48,9 +48,10 @@ describe('pads', () => {
     }
   })
 
-  it('has the train as a coming-soon 4th game', () => {
+  it('has the train as a ready 4th game', () => {
     expect(GAMES).toHaveLength(4)
-    expect(GAMES[3]).toMatchObject({ id: 'train', padColor: 'var(--sky)', icon: 'train', status: 'coming-soon' })
+    expect(GAMES[3]).toMatchObject({ id: 'train', padColor: 'var(--sky)', icon: 'train', status: 'ready' })
+    expect(GAMES[3].component).toBeDefined()
   })
 
   it('spawn beside a pad is off the pad and clear of the cake, for 3 and 4 pads', () => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { boardLayout, type BoardLayout, type Insets } from './layout'
 
 // iOS safe-area insets are only readable through CSS, so measure them with a probe element.
-function readSafeInsets(): Insets {
+export function readSafeInsets(): Insets {
   const probe = document.createElement('div')
   probe.style.cssText =
     'position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)'
