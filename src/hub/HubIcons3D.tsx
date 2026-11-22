@@ -94,6 +94,32 @@ export function RocksIcon() {
   )
 }
 
+// A little steam engine: pink boiler on its side, sky cab, butter funnel, grape wheels.
+export function TrainIcon() {
+  return (
+    <group position={[0, -0.3, 0]}>
+      <mesh position={[-0.2, 0.62, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <cylinderGeometry args={[0.36, 0.36, 1.1, 16]} />
+        <meshToonMaterial color="#FF7EB9" />
+      </mesh>
+      <RoundedBox args={[0.55, 0.9, 0.8]} radius={0.12} smoothness={3} position={[0.55, 0.65, 0]}>
+        <meshToonMaterial color="#A0E7FF" />
+      </RoundedBox>
+      <RoundedBox args={[0.62, 0.12, 0.88]} radius={0.05} smoothness={3} position={[0.55, 1.16, 0]}>
+        <meshToonMaterial color="#5B3A8C" />
+      </RoundedBox>
+      <mesh position={[-0.45, 1.05, 0]}>
+        <cylinderGeometry args={[0.12, 0.17, 0.36, 12]} />
+        <meshToonMaterial color="#FFE66D" />
+      </mesh>
+      <RoundedBox args={[1.6, 0.14, 0.7]} radius={0.05} smoothness={3} position={[0, 0.2, 0]}>
+        <meshToonMaterial color="#5B3A8C" />
+      </RoundedBox>
+      {[-0.5, 0.15, 0.6].flatMap((x) => [-0.4, 0.4].map((z) => <Wheel key={`${x}${z}`}x={x} z={z} />))}
+    </group>
+  )
+}
+
 function Question({ z, flip }: { z: number; flip?: boolean }) {
   return (
     <group position={[0, 0, z]} rotation={[0, flip ? Math.PI : 0, 0]} scale={1.25}>

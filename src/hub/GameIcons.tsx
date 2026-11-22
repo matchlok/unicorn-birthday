@@ -46,6 +46,25 @@ function Rocks() {
   )
 }
 
+// Little steam engine: pink boiler, sky cab, butter funnel, grape wheels.
+function Train() {
+  return (
+    <svg viewBox="0 0 96 96" fill="none">
+      <path d="M16 30h14v-6h-6v-6h18v6h-6v6h8v10H16z" fill="var(--butter)" {...STROKE} strokeWidth={3} />
+      <rect x="10" y="38" width="44" height="28" rx="8" fill="var(--pink)" {...STROKE} />
+      <rect x="50" y="26" width="32" height="40" rx="7" fill="var(--sky)" {...STROKE} />
+      <rect x="58" y="33" width="16" height="13" rx="4" fill="var(--cream)" {...STROKE} strokeWidth={3} />
+      <path d="M8 66h80" {...STROKE} />
+      {[26, 44, 68].map((x) => (
+        <g key={x}>
+          <circle cx={x} cy="70" r="9" fill="var(--grape)" />
+          <circle cx={x} cy="70" r="3.5" fill="var(--cream)" />
+        </g>
+      ))}
+    </svg>
+  )
+}
+
 function Present() {
   return (
     <svg viewBox="0 0 96 96" fill="none">
@@ -74,5 +93,6 @@ export function GameIcon({ icon }: { icon: GameEntry['icon'] }) {
   if (icon === 'cards') return <Cards />
   if (icon === 'kart') return <Kart />
   if (icon === 'rocks') return <Rocks />
+  if (icon === 'train') return <Train />
   return <Present />
 }

@@ -12,7 +12,7 @@ This file is the source of truth for building it. A new session should read [../
 
 | Topic | Decision |
 |---|---|
-| Games | Pad 1 Memory Match. Pad 2 Kart Racing. Pad 3 Red Rocks Romp, a side-scrolling platformer (Phase 7, added 2026-11-14). |
+| Games | Pad 1 Memory Match. Pad 2 Kart Racing. Pad 3 Red Rocks Romp, a side-scrolling platformer (Phase 7, added 2026-11-14). Pad 4 Train Maze, planned in Linear (UNI-1 to UNI-6); the pad exists as `coming-soon`. |
 | Characters | The player names the unicorn. No friend characters in the hub for now. Creatures appear only on memory cards. |
 | Audio | Sound effects only. No voice lines. Mute toggle in the corner. |
 | Platform | Desktop web with keyboard and mouse first. As of 2026-11-08, iPhone then iPad are in scope: touch controls and small-screen layouts (Phase 6). |

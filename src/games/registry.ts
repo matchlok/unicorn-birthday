@@ -23,6 +23,12 @@ export const GAMES: GameEntry[] = [
     status: 'ready',
     component: lazy(() => import('./rock-climb/RockClimb')),
   },
+  {
+    id: 'train',
+    padColor: 'var(--sky)',
+    icon: 'train',
+    status: 'coming-soon',
+  },
 ]
 
 export function findGame(id: GameEntry['id']): GameEntry | undefined {

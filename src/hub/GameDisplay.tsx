@@ -4,7 +4,7 @@ import { useMemo, useRef } from 'react'
 import type * as THREE from 'three'
 import type { GameEntry } from '../games/types'
 import { PAD_RADIUS, boothPosition, padPosition } from './hubLogic'
-import { CardsIcon, KartIcon, PadlockIcon, PresentIcon, RocksIcon, Star } from './HubIcons3D'
+import { CardsIcon, KartIcon, PadlockIcon, PresentIcon, RocksIcon, Star, TrainIcon } from './HubIcons3D'
 
 // Resolve a `var(--x)` token from the registry to a hex colour three.js can use.
 function cssColor(token: string): string {
@@ -84,6 +84,8 @@ export function GameDisplay({ game, index, count, active, onSelect }: Props) {
             <KartIcon />
           ) : game.icon === 'rocks' ? (
             <RocksIcon />
+          ) : game.icon === 'train' ? (
+            <TrainIcon />
           ) : (
             <PresentIcon />
           )}
