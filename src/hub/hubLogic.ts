@@ -24,19 +24,20 @@ export const CAKE: Circle = { x: 0, z: 0, r: 2.2 }
 
 // Presents are decoration and obstacles. `size` is the box edge; the collision circle is a bit larger.
 export const PRESENTS = [
-  { x: -8.0, z: -4.0, size: 1.2 }, // kept out wide so the walk around the cake to pad 3 stays clear
-  { x: 7.6, z: -5.4, size: 1.0 },
-  { x: -2.6, z: 5.2, size: 1.0 },
-  { x: 2.9, z: 5.7, size: 1.3 },
-  { x: 8.8, z: -1.0, size: 1.1 },
+  // Placed so nothing touches a pad or booth with 3 pads or with 4 (hubLogic.test.ts checks both).
+  { x: -9.6, z: -3.2, size: 1.2 },
+  { x: 7.8, z: -5.4, size: 1.0 },
+  { x: -0.2, z: 5.8, size: 1.0 },
+  { x: 2.9, z: 5.6, size: 1.3 },
+  { x: 9.7, z: -1.5, size: 1.1 },
 ] as const
 
 export const BUNTING_POLES: Circle[] = [
-  { x: -5, z: -4.2, r: 0.3 },
-  { x: 5, z: -4.2, r: 0.3 },
+  { x: -3.3, z: -3.8, r: 0.3 },
+  { x: 4.7, z: -3.5, r: 0.3 },
 ]
 
-// Pads sit 120° apart (for three games), starting at 30° so none is dead centre in front of the camera.
+// Pads are spread evenly (120° apart for three games, 90° for four), starting at 30° so none is dead centre in front of the camera.
 export function padAngle(index: number, count: number): number {
   return ((30 + (360 / count) * index) * Math.PI) / 180
 }
@@ -46,8 +47,21 @@ export function padPosition(index: number, count: number, dist = PAD_DISTANCE): 
   return { x: Math.cos(a) * dist, z: Math.sin(a) * dist }
 }
 
-// Where she stands when she comes back from a game: beside the pad, toward the cake, off the pad itself.
+// Where she stands when she comes back from a game: beside the pad, off the pad itself.
+// Prefers the cake side; if a booth or decoration is there (with 4 pads the booth can be), swings round the pad to the nearest clear spot.
 export function spawnBesidePad(index: number, count: number): Vec2 {
+  const pad = padPosition(index, count)
+  const toCake = Math.atan2(-pad.z, -pad.x)
+  const solids = obstacles(count)
+  const clear = (p: Vec2) =>
+    Math.hypot(p.x, p.z) <= WALK_RADIUS && solids.every((c) => Math.hypot(p.x - c.x, p.z - c.z) >= c.r + PLAYER_RADIUS)
+  for (let step = 0; step <= 12; step++) {
+    for (const sign of step === 0 ? [1] : [1, -1]) {
+      const a = toCake + sign * step * (Math.PI / 12)
+      const p = { x: pad.x + Math.cos(a) * 2.7, z: pad.z + Math.sin(a) * 2.7 }
+      if (clear(p)) return p
+    }
+  }
   return padPosition(index, count, PAD_DISTANCE - 2.7)
 }
 
