@@ -27,7 +27,8 @@ Details per phase, what is unchecked, and decisions: [docs/STATUS.md](docs/STATU
 ## Working method
 
 - Start each session by reading "Current status", then the matching phase in [docs/PLAN.md](docs/PLAN.md).
-- Tick the plan checkboxes as tasks finish. End each session by updating "Current status" and docs/STATUS.md and committing to `main`.
+- Tick the plan checkboxes as tasks finish. End each session by updating "Current status" and docs/STATUS.md.
+- Work on a feature branch, never on `main`. Nothing is committed until Narjit reviews it, and it merges to `main` through a PR only when he says so.
 - Ask before creating the GitHub repo or Vercel project, and before touching the portfolio project.
 
 ## Stack
