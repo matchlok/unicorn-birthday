@@ -156,3 +156,100 @@
   }
   .tr-picker__card { flex-direction: row; justify-content: center; width: min(320px, 90vw); }
 }
+
+/* Opening: a full-cover layer that holds input until the zoom ends. A tap or key skips it. */
+.tr-intro {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, var(--sky), var(--mint));
+  cursor: pointer;
+  transition: background-color 0.4s;
+}
+
+.tr-intro--zoom {
+  background: transparent;
+}
+
+.tr-intro__svg {
+  width: min(100%, 150vh);
+  height: 100%;
+  transition: opacity 0.45s;
+}
+
+.tr-intro--zoom .tr-intro__svg {
+  opacity: 0;
+}
+
+.tr-steam {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: tr-steam-up 2.2s ease-out infinite;
+}
+
+.tr-steam--toot {
+  animation: tr-steam-up 0.9s ease-out 1 both;
+}
+
+@keyframes tr-steam-up {
+  0% { opacity: 0.95; transform: translate(0, 0) scale(0.4); }
+  100% { opacity: 0; transform: translate(14px, -80px) scale(1.7); }
+}
+
+.tr-hop {
+  animation: tr-hop 0.35s ease-out 1;
+}
+
+@keyframes tr-hop {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-9px); }
+}
+
+/* The dino. Arms rotate about the shoulder (the origin of their own group). */
+.dino-arm--wave { animation: dino-wave 0.45s ease-in-out infinite alternate; }
+.dino-arm--cheer { animation: dino-cheer-arm 0.3s ease-in-out infinite alternate; }
+.dino-arm--point { animation: dino-point 0.6s ease-in-out infinite alternate; }
+
+@keyframes dino-wave {
+  from { transform: rotate(-22deg); }
+  to { transform: rotate(18deg); }
+}
+
+@keyframes dino-cheer-arm {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(12deg); }
+}
+
+@keyframes dino-point {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(4deg); }
+}
+
+.dino--cheer { animation: dino-jump 0.5s ease-out infinite; }
+
+@keyframes dino-jump {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-34px); }
+}
+
+.dino--idle, .dino--point { animation: dino-bob 1.8s ease-in-out infinite; }
+
+@keyframes dino-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.dino-arrow { animation: dino-nudge 0.55s ease-in-out infinite alternate; }
+
+@keyframes dino-nudge {
+  from { transform: translateX(0); }
+  to { transform: translateX(8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tr-steam, .tr-hop, .dino, .dino-arrow, [class*='dino-arm'] { animation: none; }
+  .tr-steam { opacity: 0.8; }
+}

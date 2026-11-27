@@ -25,6 +25,7 @@ export type SfxName =
   | 'whistle'
   | 'chug'
   | 'clack'
+  | 'dinoCheer'
 
 type Wave = OscillatorType
 
@@ -170,6 +171,14 @@ const SFX: Record<SfxName, (bus: GainNode, t: number) => void> = {
   clack: (bus, t) => {
     note(bus, { freq: 240, slideTo: 110, at: t, dur: 0.06, wave: 'square', gain: 0.22 })
     note(bus, { freq: 1300, slideTo: 800, at: t + 0.03, dur: 0.04, wave: 'triangle', gain: 0.3 })
+  },
+  // The dino's happy "rawr": two rising chirpy growls, a little after the whistle so they don't pile up.
+  dinoCheer: (bus, t) => {
+    const at = t + 0.4
+    note(bus, { freq: 220, slideTo: 440, at, dur: 0.2, wave: 'sawtooth', gain: 0.22 })
+    note(bus, { freq: 330, slideTo: 700, at, dur: 0.2, wave: 'triangle', gain: 0.3 })
+    note(bus, { freq: 400, slideTo: 880, at: at + 0.2, dur: 0.26, wave: 'sawtooth', gain: 0.2 })
+    note(bus, { freq: 600, slideTo: 1250, at: at + 0.2, dur: 0.26, wave: 'triangle', gain: 0.3 })
   },
 }
 
