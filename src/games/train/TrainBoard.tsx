@@ -3,21 +3,28 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { play, startChug, stopChug } from '../../engine/audio'
 import { celebrate } from '../../engine/ui/celebrate'
 import { gridSize } from './layout'
-import { initialStates, toggle, trace, type Level, type States } from './logic'
-import { buildRoute, CELL, pointAt, WAIT_AT_RED, WAIT_GAP } from './route'
+import { aimDeg, dinoSpot, hintArrow } from './dino'
+import { BoardDino, type DinoMode } from './DinoArt'
+import { hasSeenIntro, introPlan, markIntroSeen, zoomBox } from './intro'
+import { IntroScene } from './IntroScene'
+import { hintSwitch, initialStates, toggle, trace, type Level, type States } from './logic'
+import { buildRoute, CELL, centre, pointAt, WAIT_AT_RED, WAIT_GAP } from './route'
 import { Engine, StaticLayer, TunnelArt } from './TrackArt'
+import { useIntro } from './useIntro'
 import { useTrainLayout } from './useTrainLayout'
 
 // set: she arranges the switches. roll: the train follows the track. wait: (kid-test variant)
 // the train waits at a red switch. bump: stuck at a buffer. back: reversing to the station.
-// arrive: through the tunnel.
-type Phase = 'set' | 'roll' | 'wait' | 'bump' | 'back' | 'arrive'
+// arrive: through the tunnel. intro: the opening, input locked until the zoom ends.
+type Phase = 'intro' | 'set' | 'roll' | 'wait' | 'bump' | 'back' | 'arrive'
 
 const SPEED = 300 // units per second; one cell is 100
 const BACK_SPEED = 420
 const BUMP_PAUSE_MS = 1000
 const ARRIVE_MS = 1700
 const PUFF_EVERY_S = 0.17
+const HINT_AFTER_MS = 8000 // no taps for this long: the dino points at the first switch that is set wrong
+const ZOOM_FACTOR = 2.6 // how far in the opening starts
 
 type Puff = { id: number; x: number; y: number }
 
@@ -29,11 +36,18 @@ export function TrainBoard({ base, onWin, paused }: Props) {
   const { cols, rows } = gridSize(level)
 
   const [states, setStates] = useState<States>(() => initialStates(base))
-  const [phase, setPhase] = useState<Phase>('set')
+  const [settled, setPhase] = useState<Phase>('set')
   const [pos, setPos] = useState(0)
   const [flips, setFlips] = useState<Record<number, number>>({})
   const [wiggle, setWiggle] = useState<number | null>(null)
   const [puffs, setPuffs] = useState<Puff[]>([])
+  const [hint, setHint] = useState<number | null>(null) // the switch the dino points at
+  const [idleTick, setIdleTick] = useState(0) // bumps on every tap, restarting the idle timer
+
+  const [plan] = useState(() => introPlan(hasSeenIntro()))
+  const { frame, toot, skip } = useIntro(plan, paused)
+  useEffect(markIntroSeen, [])
+  const phase: Phase = frame.stage === 'done' ? settled : 'intro'
 
   const tr = useMemo(() => trace(level, states), [level, states])
   const route = useMemo(() => buildRoute(level, tr), [level, tr])
@@ -123,6 +137,7 @@ export function TrainBoard({ base, onWin, paused }: Props) {
     if (phase !== 'bump') return
     play('bump')
     setWiggle(live.current.tr.blame ?? null)
+    setHint(live.current.tr.blame ?? null)
   }, [phase])
 
   // ...then she backs up on her own.
@@ -136,6 +151,7 @@ export function TrainBoard({ base, onWin, paused }: Props) {
   useEffect(() => {
     if (phase !== 'arrive') return
     play('whistle')
+    play('dinoCheer')
     celebrate()
   }, [phase])
 
@@ -146,9 +162,17 @@ export function TrainBoard({ base, onWin, paused }: Props) {
     return () => clearTimeout(t)
   }, [phase, paused])
 
+  // No taps for a while: the dino points at the first switch that is set wrong. He never flips it.
+  useEffect(() => {
+    if (phase !== 'set' || paused || hint !== null) return
+    const t = setTimeout(() => setHint(hintSwitch(level, states)), HINT_AFTER_MS)
+    return () => clearTimeout(t)
+  }, [phase, paused, hint, level, states, idleTick])
+
   const pressGo = () => {
     if (phase !== 'set' || paused) return
     play('whistle')
+    setHint(null)
     posRef.current = 0
     setPos(0)
     setWiggle(null)
@@ -163,6 +187,7 @@ export function TrainBoard({ base, onWin, paused }: Props) {
       return
     }
     play('clack')
+    setHint(null)
     setStates((s) => toggle(s, id, level))
     setFlips((f) => ({ ...f, [id]: (f[id] ?? 0) + 1 }))
     setWiggle(null)
@@ -174,13 +199,27 @@ export function TrainBoard({ base, onWin, paused }: Props) {
 
   const pad = layout.paper // the paper border around the cells, in px
   const padU = (pad * CELL) / cell // the same, in board units
-  const viewBox = `${-padU} ${-padU} ${cols * CELL + padU * 2} ${rows * CELL + padU * 2}`
   const pose = pointAt(route, pos)
   const locked = phase !== 'set'
+
+  const full = { x: -padU, y: -padU, w: cols * CELL + padU * 2, h: rows * CELL + padU * 2 }
+  const dino = dinoSpot(level)
+  const startMid = centre([0, 0])
+  const box =
+    frame.stage === 'done'
+      ? full
+      : zoomBox(full, { x: (dino.x + startMid.x) / 2, y: (dino.y + startMid.y) / 2 }, ZOOM_FACTOR, frame.zoom)
+  const viewBox = `${box.x} ${box.y} ${box.w} ${box.h}`
+  const arrow = hint !== null && (phase === 'set' || phase === 'bump' || phase === 'back') ? hintArrow(level, hint) : null
+  const dinoMode: DinoMode = phase === 'intro' ? 'wave' : phase === 'arrive' ? 'cheer' : arrow ? 'point' : 'idle'
 
   return (
     <div
       className={`tr-play ${portrait ? 'tr-play--portrait' : 'tr-play--land'}`}
+      onPointerDownCapture={() => {
+        setHint(null)
+        setIdleTick((n) => n + 1)
+      }}
       style={{
         ['--go' as string]: `${go}px`,
         padding: `${margin.top}px ${margin.right}px ${margin.bottom}px ${margin.left}px`,
@@ -212,6 +251,8 @@ export function TrainBoard({ base, onWin, paused }: Props) {
           <StaticLayer level={level} states={states} flips={flips} wiggle={wiggle} pad={padU} />
         </svg>
         <svg viewBox={viewBox} width={cols * cell + pad * 2} height={rows * cell + pad * 2} className="tr-svg tr-svg--top">
+          <BoardDino x={dino.x} y={dino.y} mode={dinoMode} aim={arrow ? aimDeg(dino, arrow) : 0} />
+          {arrow && <HintArrow x={arrow.x} y={arrow.y} deg={arrow.deg} />}
           <g transform={`translate(${pose.x} ${pose.y}) rotate(${(pose.angle * 180) / Math.PI})`}>
             <Engine />
           </g>
@@ -232,7 +273,27 @@ export function TrainBoard({ base, onWin, paused }: Props) {
         ))}
       </div>
       </div>
+      {frame.stage !== 'done' && (
+        <div className={`tr-intro ${frame.stage === 'zoom' ? 'tr-intro--zoom' : ''}`} onClick={skip}>
+          {plan.sceneMs > 0 && <IntroScene toot={toot} />}
+        </div>
+      )}
     </div>
+  )
+}
+
+/** A big bouncing arrow beside a switch, pointing at it. Three tones and a shadow. */
+function HintArrow({ x, y, deg }: { x: number; y: number; deg: number }) {
+  const shape = 'M-24 -9H2V-17L24 0L2 17V9H-24Z'
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${deg})`}>
+      <g className="dino-arrow">
+        <path d={shape} fill="rgba(70,40,110,0.28)" transform="translate(2 4)" stroke="rgba(70,40,110,0.28)" strokeWidth="5" strokeLinejoin="round" />
+        <path d={shape} fill="#D95A9B" stroke="#D95A9B" strokeWidth="5" strokeLinejoin="round" transform="translate(0 2)" />
+        <path d={shape} fill="#FF7EB9" stroke="#FF7EB9" strokeWidth="5" strokeLinejoin="round" />
+        <path d="M-20 -3H-2" stroke="#FFB3D9" strokeWidth="3" strokeLinecap="round" />
+      </g>
+    </g>
   )
 }
 

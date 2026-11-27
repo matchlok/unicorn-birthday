@@ -150,6 +150,12 @@ export function trace(level: Level, states: States): TraceResult {
   }
 }
 
+/** The switch the dino points at: the first one on the train's path that is set wrong, or null when
+ *  the path already reaches the exit. Same switch the dead end wiggles. */
+export function hintSwitch(level: Level, states: States): number | null {
+  return trace(level, states).blame ?? null
+}
+
 function allSettings(level: Level): States[] {
   const n = level.switches.length
   const out: States[] = []
