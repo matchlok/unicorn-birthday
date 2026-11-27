@@ -16,7 +16,7 @@ export default function TrainMaze({ onExit }: GameProps) {
   const [stars, setStars] = useState<StarCount>(1)
   const [round, setRound] = useState(0) // new key = fresh switches
   const [confirming, setConfirming] = useState(false)
-  const [done, setDone] = useState<Record<number, number>>({ 1: 0, 2: 0, 3: 0 }) // wins so far per star count: picks the next level
+  const [done, setDone] = useState<Record<number, number>>({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }) // wins so far per star count: picks the next level
   const ownBack = useRef(false) // true while our own history.back() is in flight
 
   // Browser back during a game asks first, same as the home button (see MemoryMatch).

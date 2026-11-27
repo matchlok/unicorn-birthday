@@ -16,7 +16,8 @@ export type TrainLayout = {
 
 const ZERO: Insets = { top: 0, right: 0, bottom: 0, left: 0 }
 const MIN_CELL = 40
-const MAX_CELL = 170
+const MAX_CELL = 170 // phones and small screens
+const MAX_CELL_DESKTOP = 280 // roomy screens: the board grows to use the spare canvas
 const PAPER_CELLS = 0.22 // the paper border around the board, as a fraction of a cell
 
 export const gridSize = (level: Level) => ({
@@ -45,7 +46,7 @@ export function trainLayout(
 
   const byWidth = (width - margin.left - margin.right) / grid.cols
   const byHeight = (height - margin.top - margin.bottom - header) / grid.rows
-  const cell = Math.floor(Math.min(MAX_CELL, Math.max(MIN_CELL, Math.min(byWidth, byHeight))))
+  const cell = Math.floor(Math.min(compact ? MAX_CELL : MAX_CELL_DESKTOP, Math.max(MIN_CELL, Math.min(byWidth, byHeight))))
   // The paper border sticks out into the margins. Cells (tap targets) keep their size; the border
   // gives way instead when the board nearly fills the screen.
   const room = Math.min(width - grid.cols * cell, height - header - grid.rows * cell) / 2

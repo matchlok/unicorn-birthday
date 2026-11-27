@@ -191,10 +191,10 @@ export function bufferCells(level: Level): { cell: [number, number]; side: Dir }
   return out
 }
 
-/** The one side of a switch tile that no rail uses: a good spot for its lever. */
-export function freeSide(level: Level, id: number): Dir {
+/** The one side of a 2-way switch tile that no rail uses: a good spot for its lever. A 3-way switch uses all four sides: null. */
+export function freeSide(level: Level, id: number): Dir | null {
   const sw = level.switches.find((s) => s.id === id)!
-  return DIRS.find((d) => d !== sw.stemDir && !sw.branches.includes(d)) ?? 'N'
+  return DIRS.find((d) => d !== sw.stemDir && !sw.branches.includes(d)) ?? null
 }
 
 const hash = (r: number, c: number, salt = 0) => {

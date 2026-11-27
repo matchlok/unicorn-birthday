@@ -20,7 +20,7 @@
   flex-direction: column;
   align-items: center;
   gap: 24px;
-  width: 230px;
+  width: 200px;
   min-height: 260px;
   padding: 28px 16px;
   border: var(--outline);
@@ -139,20 +139,28 @@
   .tr-go--ready { animation: none; }
 }
 
-/* Phones: the picker cards shrink to fit three across (landscape) or stack (portrait). */
+/* Phones: five picker cards shrink to fit one row (landscape), or two columns with the last one centred (portrait), like Memory Match. */
 @media (max-width: 600px), (max-height: 500px) {
   .tr-picker { gap: 12px; }
-  .tr-picker__card { width: 150px; min-height: 0; gap: 12px; padding: 16px 8px; }
+  .tr-picker__card { width: 128px; min-height: 0; gap: 12px; padding: 16px 6px; }
   .tr-picker__card svg { max-width: 100%; }
   .tr-picker__track { padding: 4px; }
+  .tr-picker__card > span:first-child svg { width: 19px; height: 19px; } /* five stars + gaps must fit the 128px card */
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .tr-picker { flex-wrap: nowrap; }
 }
 
 @media (max-width: 600px) and (orientation: portrait) {
   .tr-picker {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 150px));
+    justify-content: center;
+    gap: 14px;
     margin-top: calc(var(--corner) + var(--edge));
   }
-  .tr-picker__card { flex-direction: row; justify-content: center; width: min(320px, 90vw); }
+  .tr-picker__card { width: 100%; min-height: min(170px, 21dvh); flex-direction: column; gap: 10px; padding: 14px 8px; }
+  .tr-picker__card:last-child { grid-column: 1 / -1; justify-self: center; width: 150px; }
+  .tr-picker__card > span:first-child svg { width: 22px; height: 22px; } /* five stars + gaps must fit the 150px card */
 }
