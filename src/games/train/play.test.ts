@@ -1,12 +1,20 @@
 import { describe, expect, it, vi } from 'vitest'
 import { startChug, stopChug } from '../../engine/audio'
-import { ALL_LEVELS } from './levels'
+import { ALL_LEVELS, LEVELS } from './levels'
 import { gridSize, trainLayout } from './layout'
-import { initialStates, solutionStates, solve, trace, transpose, type Level, type States } from './logic'
+import { everySetting, initialStates, isThreeWay, solutionStates, solve, trace, transpose, type Level } from './logic'
 import { buildRoute, centre, CELL, pointAt, STOP_IN } from './route'
 import { tileRails } from './tiles'
 
 const both = (level: Level): Level[] => [level, transpose(level)]
+
+// One switch, the wrong way (setting 0) running south into a buffer stop.
+const BASIC: Level = {
+  stars: 1,
+  grid: ['S-1E', '..X.', '....'],
+  startDir: 'E',
+  switches: [{ id: 1, cell: [0, 2], stemDir: 'W', branches: ['S', 'E'], solution: 1 }],
+}
 
 describe('route', () => {
   it('rolls to the exit for the right switches, on every level, either way up', () => {
@@ -26,10 +34,7 @@ describe('route', () => {
     for (const base of ALL_LEVELS) {
       const right = solve(base).length
       expect(right).toBeGreaterThan(0)
-      const n = base.switches.length
-      for (let bits = 0; bits < 1 << n; bits++) {
-        const states: States = {}
-        base.switches.forEach((sw, i) => (states[sw.id] = ((bits >> i) & 1) as 0 | 1))
+      for (const states of everySetting(base)) {
         const tr = trace(base, states)
         const route = buildRoute(base, tr)
         expect(route.exit).toBe(tr.end === 'exit')
@@ -75,7 +80,7 @@ describe('route', () => {
   })
 
   it('a dead end stops STOP_IN into the last cell it entered', () => {
-    const level = ALL_LEVELS[0] // S-1E over a buffer stop
+    const level = BASIC // S-1E over a buffer stop
     const tr = trace(level, initialStates(level))
     expect(tr.end).toBe('deadEnd')
     const route = buildRoute(level, tr)
@@ -88,7 +93,7 @@ describe('route', () => {
 
 describe('tile rails', () => {
   it('show the switch bending the way it points, and the other way faint', () => {
-    const level = ALL_LEVELS[0]
+    const level = BASIC
     const south = tileRails(level, 0, 2, { 1: 0 }) // branch 0 is S
     expect(south).toEqual([
       { a: 'W', b: 'S', ghost: false },
@@ -96,6 +101,17 @@ describe('tile rails', () => {
     ])
     const east = tileRails(level, 0, 2, { 1: 1 })
     expect(east.map((r) => r.ghost)).toEqual([true, false])
+  })
+
+  it('shows all three branches of a 3-way switch, the two it is not set to faint', () => {
+    const level = LEVELS[4][0]
+    const sw = level.switches.find(isThreeWay)!
+    for (const setting of [0, 1, 2] as const) {
+      const rails = tileRails(level, sw.cell[0], sw.cell[1], { ...solutionStates(level), [sw.id]: setting })
+      expect(rails.map((r) => r.b)).toEqual(sw.branches)
+      expect(rails.filter((r) => !r.ghost)).toHaveLength(1)
+      expect(rails[setting].ghost).toBe(false)
+    }
   })
 
   it('gives every non-empty tile of every level at least one rail', () => {
@@ -114,19 +130,42 @@ describe('layout', () => {
     { width: 1366, height: 768 },
     { width: 390, height: 844 },
   ]
-  it('keeps every switch tap target at least 88px at 1366x768 and 390x844', () => {
+  const cellFor = (vp: { width: number; height: number }, base: Level) =>
+    trainLayout(vp, gridSize(vp.height > vp.width ? transpose(base) : base)).cell
+
+  it('keeps every switch tap target at least 88px on 1 to 3 stars at 1366x768 and 390x844', () => {
     for (const vp of sizes) {
-      for (const base of ALL_LEVELS) {
-        const level = vp.height > vp.width ? transpose(base) : base
-        const { cell } = trainLayout(vp, gridSize(level))
-        expect(cell, `${vp.width}x${vp.height}, ${base.stars} stars`).toBeGreaterThanOrEqual(88)
+      for (const base of ALL_LEVELS.filter((lv) => lv.stars <= 3)) {
+        expect(cellFor(vp, base), `${vp.width}x${vp.height}, ${base.stars} stars`).toBeGreaterThanOrEqual(88)
       }
+    }
+  })
+
+  it('keeps 4 and 5 star tap targets at least 88px on a laptop, and no smaller than 75 and 63px on a 390x844 phone', () => {
+    for (const base of ALL_LEVELS.filter((lv) => lv.stars >= 4)) {
+      expect(cellFor(sizes[0], base), `laptop, ${base.stars} stars`).toBeGreaterThanOrEqual(88)
+      expect(cellFor(sizes[1], base), `phone, ${base.stars} stars`).toBeGreaterThanOrEqual(base.stars === 4 ? 75 : 63)
+    }
+  })
+
+  it('grows the board past the phone cap on a big desktop screen', () => {
+    const big = { width: 2560, height: 1440 }
+    const three = cellFor(big, LEVELS[3][0])
+    expect(three).toBeGreaterThan(170)
+    expect(cellFor(big, LEVELS[5][0])).toBeGreaterThan(170)
+    expect(cellFor(big, LEVELS[5][0])).toBeLessThanOrEqual(three)
+    for (const base of ALL_LEVELS) {
+      const level = base
+      const grid = gridSize(level)
+      const l = trainLayout(big, grid)
+      expect(l.margin.left + l.margin.right + grid.cols * l.cell).toBeLessThanOrEqual(big.width)
+      expect(l.margin.top + l.margin.bottom + l.header + grid.rows * l.cell).toBeLessThanOrEqual(big.height)
     }
   })
 
   it('fits the board inside the screen and keeps the Go button about 120px', () => {
     for (const vp of sizes) {
-      const level = vp.height > vp.width ? transpose(ALL_LEVELS[6]) : ALL_LEVELS[6]
+      const level = vp.height > vp.width ? transpose(ALL_LEVELS[14]) : ALL_LEVELS[14] // the biggest board
       const grid = gridSize(level)
       const l = trainLayout(vp, grid)
       expect(l.go).toBe(120)

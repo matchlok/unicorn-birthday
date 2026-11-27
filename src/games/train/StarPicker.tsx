@@ -5,12 +5,14 @@ import { Stars } from '../../engine/ui/Stars'
 import { LEVELS } from './levels'
 import { MiniTrack } from './TrackArt'
 
-export type StarCount = 1 | 2 | 3
+export type StarCount = 1 | 2 | 3 | 4 | 5
 
 const OPTIONS: { stars: StarCount; color: string }[] = [
   { stars: 1, color: 'var(--mint)' },
   { stars: 2, color: 'var(--butter)' },
   { stars: 3, color: 'var(--pink)' },
+  { stars: 4, color: 'var(--sky)' },
+  { stars: 5, color: 'var(--lavender)' },
 ]
 
 export function StarPicker({ onPick }: { onPick: (stars: StarCount) => void }) {
@@ -43,7 +45,7 @@ export function StarPicker({ onPick }: { onPick: (stars: StarCount) => void }) {
             onPick(stars)
           }}
         >
-          <Stars count={stars} size={44} />
+          <Stars count={stars} size={stars > 3 ? 26 : 44} />
           <span className="tr-picker__track">
             <MiniTrack level={LEVELS[stars][0]} width={150} />
           </span>

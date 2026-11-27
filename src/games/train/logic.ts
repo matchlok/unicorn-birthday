@@ -7,9 +7,12 @@
 //   1..6 a switch (7 is a curve); the digit is its id in the level's switch table
 
 export type Dir = 'N' | 'E' | 'S' | 'W'
-export type Setting = 0 | 1
+export type Setting = 0 | 1 | 2
 export type States = Record<number, Setting>
-export type Lamp = 'green' | 'red'
+export type Lamp = 'green' | 'red' | 'yellow'
+
+/** Setting 0, 1, 2 show as these lamps: round green, square red, triangle yellow. */
+export const LAMPS: Lamp[] = ['green', 'red', 'yellow']
 
 export interface Switch {
   id: number
@@ -17,12 +20,10 @@ export interface Switch {
   cell: [number, number]
   /** Side of the switch tile where the stem is. The train must enter from here. */
   stemDir: Dir
-  /** Where the train leaves for setting 0 and setting 1. */
-  branches: [Dir, Dir]
-  /** The setting that lines this switch up with the exit. */
+  /** Where the train leaves for setting 0, 1 and (on a 3-way switch) 2: two or three of the sides that are not the stem. */
+  branches: Dir[]
+  /** The setting that lines this switch up with the exit. A decoy (off the route) never matters. */
   solution: Setting
-  /** Another switch that flips together with this one (not used by the 1 to 3 star levels). */
-  link?: number
 }
 
 export interface Level {
@@ -74,10 +75,17 @@ export function switchById(level: Level, id: number): Switch {
   return sw
 }
 
-/** Every switch set wrong: she has to flip all of them, one per star. */
+export const isThreeWay = (sw: Switch) => sw.branches.length === 3
+
+/** Every switch on the route set wrong, so each needs at least one tap. A 3-way switch starts one
+ *  step before or one step after the right setting (by id), so some need one tap and some two. */
 export function initialStates(level: Level): States {
   const states: States = {}
-  for (const sw of level.switches) states[sw.id] = sw.solution === 0 ? 1 : 0
+  for (const sw of level.switches) {
+    const n = sw.branches.length
+    const behind = n === 2 || sw.id % 2 === 0 ? n - 1 : 1 // n - 1 steps on is one step back
+    states[sw.id] = ((sw.solution + behind) % n) as Setting
+  }
   return states
 }
 
@@ -87,20 +95,23 @@ export function solutionStates(level: Level): States {
   return states
 }
 
-/** Flip a switch, and any switch linked to it. */
+/** Tap a switch: it moves on to its next setting, and after the last it comes round to the first. */
 export function toggle(states: States, id: number, level: Level): States {
-  const next = { ...states }
   const sw = switchById(level, id)
-  const flip = new Set<number>([id])
-  if (sw.link !== undefined) flip.add(sw.link)
-  for (const other of level.switches) if (other.link === id) flip.add(other.id)
-  for (const f of flip) next[f] = next[f] === 0 ? 1 : 0
-  return next
+  return { ...states, [id]: (((states[id] ?? 0) + 1) % sw.branches.length) as Setting }
 }
 
-/** The two switch positions look like a green lamp and a red lamp. It never says which is right. */
+/** Setting 0, 1, 2 look like a green, red, yellow lamp. It never says which is right. */
 export function lamp(_level: Level, states: States, id: number): Lamp {
-  return states[id] === 0 ? 'green' : 'red'
+  return LAMPS[states[id] ?? 0]
+}
+
+/** Switches the solved route never reaches: they send the train to a buffer whichever way they point. */
+export function decoyIds(level: Level): number[] {
+  const { path } = trace(level, solutionStates(level))
+  return level.switches
+    .filter((sw) => !path.some(([r, c]) => r === sw.cell[0] && c === sw.cell[1]))
+    .map((sw) => sw.id)
 }
 
 export function trace(level: Level, states: States): TraceResult {
@@ -156,23 +167,34 @@ export function hintSwitch(level: Level, states: States): number | null {
   return trace(level, states).blame ?? null
 }
 
+/** Every combination of settings: 2 or 3 per switch, so 2^a * 3^b (at most a few hundred to a few thousand here). */
 function allSettings(level: Level): States[] {
-  const n = level.switches.length
-  const out: States[] = []
-  for (let bits = 0; bits < 1 << n; bits++) {
-    const states: States = {}
-    level.switches.forEach((sw, i) => {
-      states[sw.id] = ((bits >> i) & 1) as Setting
-    })
-    out.push(states)
+  let out: States[] = [{}]
+  for (const sw of level.switches) {
+    out = out.flatMap((states) => sw.branches.map((_, i) => ({ ...states, [sw.id]: i as Setting })))
   }
   return out
 }
 
-/** Every setting (2^n, n <= 6) that rolls the train out through the exit. */
+/** Every setting that rolls the train out through the exit. A decoy can point any way, so a level
+ *  with decoys has several of these that differ only in the decoys. */
 export function solve(level: Level): States[] {
   return allSettings(level).filter((states) => trace(level, states).end === 'exit')
 }
+
+/** The solutions told apart by the switches on the route only: one for a well-made level. */
+export function routeSolutions(level: Level): States[] {
+  const decoys = new Set(decoyIds(level))
+  const seen = new Map<string, States>()
+  for (const states of solve(level)) {
+    const onRoute = level.switches.filter((sw) => !decoys.has(sw.id))
+    seen.set(onRoute.map((sw) => states[sw.id]).join(), Object.fromEntries(onRoute.map((sw) => [sw.id, states[sw.id]])))
+  }
+  return [...seen.values()]
+}
+
+/** Every combination of settings, for tests. */
+export const everySetting = allSettings
 
 const TRANSPOSE_DIR: Record<Dir, Dir> = { N: 'W', W: 'N', S: 'E', E: 'S' }
 const TRANSPOSE_TILE: Record<string, string> = { '-': '|', '|': '-', '7': 'L', L: '7', F: 'F', J: 'J' }
@@ -198,7 +220,7 @@ export function transpose(level: Level): Level {
       ...sw,
       cell: [sw.cell[1], sw.cell[0]],
       stemDir: TRANSPOSE_DIR[sw.stemDir],
-      branches: [TRANSPOSE_DIR[sw.branches[0]], TRANSPOSE_DIR[sw.branches[1]]],
+      branches: sw.branches.map((d) => TRANSPOSE_DIR[d]),
     })),
   }
 }

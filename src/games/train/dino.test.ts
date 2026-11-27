@@ -21,7 +21,7 @@ describe('hintSwitch (the blame switch)', () => {
         for (let id = hintSwitch(level, states); id !== null; id = hintSwitch(level, states)) {
           expect(level.switches.find((s) => s.id === id)!.solution).not.toBe(states[id])
           states = toggle(states, id, level)
-          expect(++taps).toBeLessThanOrEqual(level.switches.length)
+          expect(++taps).toBeLessThanOrEqual(level.switches.reduce((n, s) => n + s.branches.length - 1, 0))
         }
         expect(trace(level, states).end).toBe('exit')
       }

@@ -222,17 +222,57 @@ function Arrow({ dir }: { dir: Level['startDir'] }) {
   )
 }
 
-/** The turntable and lever seen from above, beside the rails. Round green lamp = first way, square red lamp = second. */
+/** Angle of the lever for each setting, in degrees. Each step goes the short way round from the one before,
+ *  so the lever keeps turning the same way as she taps through the settings. */
+function leverAngles(sw: Level['switches'][number]): number[] {
+  const ang = (b: number) => deg(Math.atan2(VEC[sw.branches[b]][1], VEC[sw.branches[b]][0]))
+  const out = [ang(0)]
+  for (let i = 1; i < sw.branches.length; i++) {
+    const d = ((ang(i) - ang(i - 1) + 540) % 360) - 180
+    out.push(out[i - 1] + d)
+  }
+  return out
+}
+
+/** The lamp on the end of the lever: round green (setting 0), square red (1), triangle yellow (2). The shape says it
+ *  as well as the colour. Drawn pointing along +x from the lever's pivot at (cx, cy). */
+function LampShape({ setting, cx, cy }: { setting: number; cx: number; cy: number }) {
+  if (setting === 0) {
+    return (
+      <g>
+        <circle cx={cx + 31} cy={cy + 2.5} r="7.5" fill="#2f8f57" />
+        <circle cx={cx + 31} cy={cy} r="7.5" fill="#5fd38a" />
+        <circle cx={cx + 29} cy={cy - 2.5} r="2.4" fill="#C8F5D8" />
+      </g>
+    )
+  }
+  if (setting === 1) {
+    return (
+      <g>
+        <rect x={cx + 23.5} y={cy - 5} width="15" height="15" rx="3" fill="#9c2a3d" />
+        <rect x={cx + 23.5} y={cy - 7.5} width="15" height="15" rx="3" fill={RED} />
+        <rect x={cx + 25.5} y={cy - 5.5} width="5" height="4" rx="1.5" fill="#ffb3bd" />
+      </g>
+    )
+  }
+  const tri = `M${cx + 41} ${cy}L${cx + 24} ${cy - 10}L${cx + 24} ${cy + 10}Z`
+  return (
+    <g strokeLinejoin="round">
+      <path d={tri} fill="#a56f00" stroke="#a56f00" strokeWidth="3" transform="translate(0 2.5)" />
+      <path d={tri} fill="#FFC21A" stroke="#FFC21A" strokeWidth="3" />
+      <path d={`M${cx + 27} ${cy - 5}L${cx + 33} ${cy - 2}`} stroke="#FFF1B8" strokeWidth="2.4" strokeLinecap="round" />
+    </g>
+  )
+}
+
+/** The turntable and lever seen from above. A 2-way switch has it beside the rails; a 3-way switch uses all four
+ *  sides for rails, so its turntable sits in the middle and the lever points the way the train will go. */
 function Lever({ level, id, setting }: { level: Level; id: number; setting: number }) {
   const sw = level.switches.find((s) => s.id === id)!
-  const f = VEC[freeSide(level, id)]
-  const cx = 50 + f[0] * 37
-  const cy = 50 + f[1] * 37
-  const ang = (b: number) => deg(Math.atan2(VEC[sw.branches[b]][1], VEC[sw.branches[b]][0]))
-  const a0 = ang(0)
-  let d = ang(1) - a0
-  d = ((d + 540) % 360) - 180 // shortest way round
-  const rot = setting === 0 ? a0 : a0 + d
+  const f = freeSide(level, id)
+  const cx = f ? 50 + VEC[f][0] * 37 : 50
+  const cy = f ? 50 + VEC[f][1] * 37 : 50
+  const rot = leverAngles(sw)[setting]
   return (
     <g>
       <circle cx={cx + 2} cy={cy + 5} r="15" fill={SHADOW} />
@@ -247,19 +287,7 @@ function Lever({ level, id, setting }: { level: Level; id: number; setting: numb
         <rect x={cx - 1} y={cy - 2.2} width="30" height="8" rx="4" fill={BUTTER_DARK} />
         <rect x={cx - 1} y={cy - 4} width="30" height="8" rx="4" fill={BUTTER} />
         <rect x={cx + 2} y={cy - 2.6} width="20" height="2.4" rx="1.2" fill={BUTTER_LIGHT} />
-        {setting === 0 ? (
-          <g>
-            <circle cx={cx + 31} cy={cy + 2.5} r="7.5" fill="#2f8f57" />
-            <circle cx={cx + 31} cy={cy} r="7.5" fill="#5fd38a" />
-            <circle cx={cx + 29} cy={cy - 2.5} r="2.4" fill="#C8F5D8" />
-          </g>
-        ) : (
-          <g>
-            <rect x={cx + 23.5} y={cy - 5} width="15" height="15" rx="3" fill="#9c2a3d" />
-            <rect x={cx + 23.5} y={cy - 7.5} width="15" height="15" rx="3" fill={RED} />
-            <rect x={cx + 25.5} y={cy - 5.5} width="5" height="4" rx="1.5" fill="#ffb3bd" />
-          </g>
-        )}
+        <LampShape setting={setting} cx={cx} cy={cy} />
       </g>
     </g>
   )
@@ -283,7 +311,7 @@ function SwitchArt({ level, states, id, flips, wiggle }: SwitchProps) {
           style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
           animate={flips > 0 ? { scaleX: [1.14, 0.96, 1], scaleY: [0.72, 1.08, 1], transition: { duration: 0.28 } } : {}}
         >
-          <Arrow dir={sw.branches[setting]} />
+          {sw.branches.length === 2 && <Arrow dir={sw.branches[setting]} />}
           <Lever level={level} id={id} setting={setting} />
         </motion.g>
       </motion.g>

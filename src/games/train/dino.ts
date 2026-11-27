@@ -42,7 +42,8 @@ export function dinoSpot(level: Level): Spot {
  *  points back into it, so it never lies over the tap area. `deg` is the direction it points. */
 export function hintArrow(level: Level, id: number): Spot & { deg: number } {
   const sw = switchById(level, id)
-  const f = VEC[freeSide(level, id)]
+  // a 3-way switch has no free side: the arrow waits on the side the train comes from
+  const f = VEC[freeSide(level, id) ?? sw.stemDir]
   const d = CELL / 2 + ARROW_REACH + 10 // the tip is ARROW_REACH from the middle, with room to bounce
   return {
     x: (sw.cell[1] + 0.5) * CELL + f[0] * d,
