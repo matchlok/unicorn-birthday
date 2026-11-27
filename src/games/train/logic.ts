@@ -161,6 +161,12 @@ export function trace(level: Level, states: States): TraceResult {
   }
 }
 
+/** The switch the dino points at: the first one on the train's path that is set wrong, or null when
+ *  the path already reaches the exit. Same switch the dead end wiggles. */
+export function hintSwitch(level: Level, states: States): number | null {
+  return trace(level, states).blame ?? null
+}
+
 /** Every combination of settings: 2 or 3 per switch, so 2^a * 3^b (at most a few hundred to a few thousand here). */
 function allSettings(level: Level): States[] {
   let out: States[] = [{}]
