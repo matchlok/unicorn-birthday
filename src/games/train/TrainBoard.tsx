@@ -252,7 +252,6 @@ export function TrainBoard({ base, onWin, paused }: Props) {
         </svg>
         <svg viewBox={viewBox} width={cols * cell + pad * 2} height={rows * cell + pad * 2} className="tr-svg tr-svg--top">
           <BoardDino x={dino.x} y={dino.y} mode={dinoMode} aim={arrow ? aimDeg(dino, arrow) : 0} />
-          {arrow && <HintArrow x={arrow.x} y={arrow.y} deg={arrow.deg} />}
           <g transform={`translate(${pose.x} ${pose.y}) rotate(${(pose.angle * 180) / Math.PI})`}>
             <Engine />
           </g>
@@ -279,21 +278,6 @@ export function TrainBoard({ base, onWin, paused }: Props) {
         </div>
       )}
     </div>
-  )
-}
-
-/** A big bouncing arrow beside a switch, pointing at it. Three tones and a shadow. */
-function HintArrow({ x, y, deg }: { x: number; y: number; deg: number }) {
-  const shape = 'M-24 -9H2V-17L24 0L2 17V9H-24Z'
-  return (
-    <g transform={`translate(${x} ${y}) rotate(${deg})`}>
-      <g className="dino-arrow">
-        <path d={shape} fill="rgba(70,40,110,0.28)" transform="translate(2 4)" stroke="rgba(70,40,110,0.28)" strokeWidth="5" strokeLinejoin="round" />
-        <path d={shape} fill="#D95A9B" stroke="#D95A9B" strokeWidth="5" strokeLinejoin="round" transform="translate(0 2)" />
-        <path d={shape} fill="#FF7EB9" stroke="#FF7EB9" strokeWidth="5" strokeLinejoin="round" />
-        <path d="M-20 -3H-2" stroke="#FFB3D9" strokeWidth="3" strokeLinecap="round" />
-      </g>
-    </g>
   )
 }
 
